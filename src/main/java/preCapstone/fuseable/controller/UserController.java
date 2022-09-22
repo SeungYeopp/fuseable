@@ -16,20 +16,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@RestController
-@RequestMapping("/api")
+@RestController       //jackson 관련 라이브러리 사용시 사용
+@RequestMapping("/api")   // localhost:8080/api 형태로 매핑 됨
 public class UserController {
 
-    @Autowired
+    @Autowired  //자동으로 각 상황의 타입에 맞는 bean을 주입
     private UserService userService;
 
     // 프론트에서 인가코드 받아오는 url
-    @GetMapping("/oauth/token")
+    @GetMapping("/oauth/token")  //url mapping
     public ResponseEntity getLogin(@RequestParam("code") String code) {
 
+        //인가코드를 통해 access token발행으로 발급
         OauthToken oauthToken = userService.getAccessToken(code);
 
-        // 넘어온 인가 코드를 통해 access_token 발급
+        // 발급받은 acess token을 통해  DB에 카카오 정보 저장 후 JWT 생성
         String jwtToken = userService.saveUserAndGetToken(oauthToken.getAccess_token());
 
         HttpHeaders headers = new HttpHeaders();
@@ -39,12 +40,12 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Object> getCurrentUser(HttpServletRequest request) { //(1)
+    public ResponseEntity<Object> getCurrentUser(HttpServletRequest request) { //httpServletRequest를 받아옴
 
-        //(2)
+        //userService에 해당 메소드 만듬
         User user = userService.getUser(request);
 
-        //(3)
+        //ResponseEntity를 이용해 body 값에 인증된 사용자 정보를 넘겨준다.
         return ResponseEntity.ok().body(user);
     }
 

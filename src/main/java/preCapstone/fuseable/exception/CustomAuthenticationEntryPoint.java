@@ -18,7 +18,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
-        //(1)
         String exception = (String) request.getAttribute(JwtProperties.HEADER_STRING);
         String errorCode;
 
@@ -33,7 +32,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         }
     }
 
-    //(2)
+    //status, contentType,오류 메시지등을 답아 응답해주는 메소드
     private void setResponse(HttpServletResponse response, String errorCode) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");

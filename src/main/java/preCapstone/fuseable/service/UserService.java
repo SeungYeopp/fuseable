@@ -27,31 +27,31 @@ import java.util.Date;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository; //(1)
+    UserRepository userRepository; //userRepository 연동
 
     //OAuth -> jwt
     public OauthToken getAccessToken(String code) {
 
-        //(2)
+        //http 통신 관련 범용 라이브러리, 애플리케이션 내부 REST API 요청
         RestTemplate rt = new RestTemplate();
 
-        //(3)
+        //http 헤더 오브젝트 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        //(4)
+        //http 바디 오브젝트 생성, kakao developer에 있는 값
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "{클라이언트 앱 키}");
-        params.add("redirect_uri", "{리다이렉트 uri}");
+        params.add("client_id", "a8c0f54a40e17de117e2f618394a3e20");
+        params.add("redirect_uri", "http://localhost:3000/login/auth");
         params.add("code", code);
-        params.add("client_secret", "{시크릿 키}"); // 생략 가능!
+        // params.add("client_secret", "{시크릿 키}"); // 생략 가능!
 
-        //(5)
+        //HttpEntity 생성, header + body를 하나에 담음
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(params, headers);
 
-        //(6)
+        //Json 형태이기 때문에 string으로 받음, .exchagne(요청 url, httpmethod.형식, Entity, 타입)으로 api 호출
         ResponseEntity<String> accessTokenResponse = rt.exchange(
                 "https://kauth.kakao.com/oauth/token",
                 HttpMethod.POST,
@@ -59,16 +59,17 @@ public class UserService {
                 String.class
         );
 
-        //(7)
+        //json object간의 변환
         ObjectMapper objectMapper = new ObjectMapper();
         OauthToken oauthToken = null;
         try {
+            //json -> OauthToken이라는 object로 변환
             oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthToken.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        return oauthToken; //(8)
+        return oauthToken; //문제 없으면 리턴
     }
 
     public String saveUserAndGetToken(String token) {
@@ -111,15 +112,16 @@ public class UserService {
         return jwtToken;
     }
 
-    public User getUser(HttpServletRequest request) { //(1)
-        //(2)
+    public User getUser(HttpServletRequest request) { //HttpServletRequest를 파라미터로 받음
+
+        //request에는 JwtRequestFilter를 거쳐 인증된 사용자의 usercode가 들어가있으니 사용
         Long userCode = (Long) request.getAttribute("userCode");
 
-        //(3)
+        //usercode로 DB에서 사용자 정보를 가져와 User에 담음
         User user = userRepository.findByUserCode(userCode);
 
-        //(4)
-        return user;
+        //객체 반환환
+       return user;
     }
 
 

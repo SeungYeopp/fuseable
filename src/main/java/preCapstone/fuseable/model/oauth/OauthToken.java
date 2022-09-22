@@ -3,7 +3,7 @@ package preCapstone.fuseable.model.oauth;
 import lombok.Data;
 
 @Data
-public class OauthToken {
+public class OauthToken { //OauthToken클래스 안의 내용
 
     private String access_token;
     private String token_type;
