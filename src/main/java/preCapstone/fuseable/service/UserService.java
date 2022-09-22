@@ -120,7 +120,7 @@ public class UserService {
         //usercode로 DB에서 사용자 정보를 가져와 User에 담음
         User user = userRepository.findByUserCode(userCode);
 
-        //객체 반환환
+        //객체 반환
        return user;
     }
 
