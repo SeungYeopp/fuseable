@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import preCapstone.fuseable.dto.project.ProjectDetailForProjectListDto;
 import preCapstone.fuseable.dto.project.ProjectEachResponseDto;
 import preCapstone.fuseable.model.User;
-import preCapstone.fuseable.model.project.ProjectRepository;
+import preCapstone.fuseable.repository.project.ProjectRepository;
 import preCapstone.fuseable.model.project.UserProjectMapping;
-import preCapstone.fuseable.model.project.userProjectMappingRepository;
+import preCapstone.fuseable.repository.project.userProjectMappingRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
