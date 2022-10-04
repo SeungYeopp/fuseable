@@ -9,7 +9,7 @@ import preCapstone.fuseable.dto.project.ProjectEachResponseDto;
 import preCapstone.fuseable.model.User;
 import preCapstone.fuseable.repository.project.ProjectRepository;
 import preCapstone.fuseable.model.project.UserProjectMapping;
-import preCapstone.fuseable.repository.project.userProjectMappingRepository;
+import preCapstone.fuseable.repository.project.UserProjectMappingRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ public class ProjectService {
     public List<ProjectEachResponseDto> readProjectList(User currentUser) {  //현재 사용자를 받아서, 사용자의 프로젝트 리스트를 알려줌
 
         //현재 사용자의 ID를 키값으로 들어가있는 프로젝트 확인 (유저 ID, 프로젝트 순서,프로젝트 ID)
-        List<UserProjectMapping> userProjectList = userProjectMappingRepository.findbyUserId(currentUser.getUserCode());
+        List<UserProjectMapping> userProjectList = UserProjectMappingRepository.findbyUserId(currentUser.getUserCode());
 
         //Project ID를 모음
         List<Long> projectIdList = userProjectList.stream()
