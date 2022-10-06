@@ -1,4 +1,4 @@
-package preCapstone.fuseable.model;
+package preCapstone.fuseable.model.user;
 
 import lombok.Builder;
 import lombok.Data;

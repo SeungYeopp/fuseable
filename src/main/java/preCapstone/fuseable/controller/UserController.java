@@ -8,13 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import preCapstone.fuseable.config.jwt.JwtProperties;
 import org.springframework.http.*;
-import preCapstone.fuseable.model.User;
+import preCapstone.fuseable.model.user.User;
 import preCapstone.fuseable.model.oauth.OauthToken;
 import preCapstone.fuseable.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @RestController       //jackson 관련 라이브러리 사용시 사용
 @RequestMapping("/api")   // localhost:8080/api 형태로 매핑 됨

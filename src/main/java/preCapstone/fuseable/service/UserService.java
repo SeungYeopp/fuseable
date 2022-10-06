@@ -16,8 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import preCapstone.fuseable.config.jwt.JwtProperties;
 import preCapstone.fuseable.model.oauth.KakaoProfile;
 import preCapstone.fuseable.model.oauth.OauthToken;
-import preCapstone.fuseable.model.User;
-import preCapstone.fuseable.repository.UserRepository;
+import preCapstone.fuseable.model.user.User;
+import preCapstone.fuseable.repository.user.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;

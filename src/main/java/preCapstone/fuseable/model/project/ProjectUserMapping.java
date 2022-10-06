@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import preCapstone.fuseable.model.User;
+import preCapstone.fuseable.model.user.User;
 
 import javax.persistence.*;
 
@@ -14,15 +14,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @DynamicUpdate
 @Entity
-public class UserProjectMapping {
+public class ProjectUserMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SEQ")
     private Long seq;
 
-    /*@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "ROLE")
-    private UserProjectRole role;*/
+    private Role role;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "USER_ID")
     private User user;
@@ -32,9 +32,9 @@ public class UserProjectMapping {
     private Project project;
 
     @Builder
-    public UserProjectMapping( User user, Project project) {
+    public ProjectUserMapping( User user, Project project, Role role) {
         this.user = user;
         this.project = project;
-       // this.role = userProjectRole;
+        this.role = role;
     }
 }

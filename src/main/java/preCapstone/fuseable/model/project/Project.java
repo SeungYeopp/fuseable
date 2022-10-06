@@ -4,11 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import preCapstone.fuseable.dto.project.ProjectRequestDto;
 import preCapstone.fuseable.model.Timestamped;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Getter
 @NoArgsConstructor
