@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 import preCapstone.fuseable.exception.CustomAuthenticationEntryPoint;
 import preCapstone.fuseable.config.jwt.JwtRequestFilter;
-import preCapstone.fuseable.repository.UserRepository;
+import preCapstone.fuseable.repository.user.UserRepository;
 
 
 // Oauth 로그인 진행 순서

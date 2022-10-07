@@ -5,22 +5,19 @@ import lombok.Getter;
 import preCapstone.fuseable.model.project.Project;
 
 @Getter
-public class ProjectListDto {
+public class ProjectCreateDto {
     private Long projectId;
     private String title;
-    private String detail;
 
     @Builder
-    public ProjectListDto (Long projectId, String title, String detail) {
+    public ProjectCreateDto(Long projectId, String title, String detail) {
         this.projectId = projectId;
         this.title = title;
-        this.detail = detail;
     }
 
-    public static ProjectListDto fromEntity (Project project) {
-        return ProjectListDto.builder()
+    public static ProjectCreateDto fromEntity (Project project) {
+        return ProjectCreateDto.builder()
                 .title(project.getTitle())
-                .detail(project.getDetail())
                 .projectId(project.getProjectId())
                 .build();
     }

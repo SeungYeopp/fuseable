@@ -1,7 +1,7 @@
-package preCapstone.fuseable.repository;
+package preCapstone.fuseable.repository.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import preCapstone.fuseable.model.User;
+import preCapstone.fuseable.model.user.User;
 
 
 

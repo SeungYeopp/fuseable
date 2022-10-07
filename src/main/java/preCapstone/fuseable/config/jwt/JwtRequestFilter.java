@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import preCapstone.fuseable.repository.UserRepository;
+import preCapstone.fuseable.repository.user.UserRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
