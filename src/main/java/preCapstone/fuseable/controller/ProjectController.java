@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import preCapstone.fuseable.dto.project.ProjectCreateDto;
-import preCapstone.fuseable.dto.project.ProjectDeleteDto;
-import preCapstone.fuseable.dto.project.ProjectReadListDto;
-import preCapstone.fuseable.dto.project.ProjectTitleDto;
+import preCapstone.fuseable.dto.project.*;
 import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.ProjectService;
 
@@ -21,9 +18,9 @@ public class ProjectController {
 
     // 프로젝트 조회
     @GetMapping("")
-    public ProjectReadListDto projectReadList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ProjectReadListDto readProjectList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ProjectReadListDto.builder()
-                .projectReadList(projectService.projectReadList(userDetails.getUser()))
+                .readProjectList(projectService.projectReadList(userDetails.getUser()))
                 .build();
     }
 
@@ -41,8 +38,11 @@ public class ProjectController {
 
     //프로젝트 선택
     @GetMapping("/{projectId}")
-    public ProjectSelectDto selectProject (@PathVariable Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return projectService.selectProject(projectId, userDetails.getUser())
+    public ProjectSelectDetailDto selectProject (@PathVariable Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        return ProjectSelectDetailDto.builder()
+                .selectProject(projectService.selectProject(projectId, userDetails.getUser()))
+                .build();
     }
 
     // 초대 (보류)

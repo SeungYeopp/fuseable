@@ -77,7 +77,7 @@ public class ProjectService {
 
         // Project의 Admin인지 확인 권한 확인
         if (!projectUserMapping.getRole().equals(Role.ROLE_ADMIN)) {
-            throw new ApiRequestException("프로젝트 소유주가 아닙니다.");
+            throw new ApiRequestException("Admin 권한이 없습니다.");
         }
 
         ProjectUserMapping projectUserMapping = ProjectUserMappingRepository.findbyUserId(currentUser.getUserCode());
@@ -95,8 +95,11 @@ public class ProjectService {
                 .build();
     }
 
-    @Transactional
-    public ProjectSelectDto selectDto(Long projectId, User CurrentUser){
+    @Transactional(readOnly = true)
+    public ProjectSelectDto selectProject(Long projectId, User CurrentUser){
+
+        List<ProjectUserMapping> projectUserMappingList = ProjectUserMappingRepository.findbyUserId(currentUser.getUserCode());
+
 
         return
     }

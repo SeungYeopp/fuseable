@@ -23,14 +23,14 @@ public class ProjectReadDto {
     // 프로젝트 안에 노트 중 가장 최근 수정 일자
     private LocalDateTime recentNoteUpdateDate;
 
-    private Boolean master;
+    private Boolean admin;
 
     @Builder
-    public ProjectReadDto(Long projectId, String title,  LocalDateTime recentNoteUpdateDate,Boolean master) {
+    public ProjectReadDto(Long projectId, String title,  LocalDateTime recentNoteUpdateDate,Boolean admin) {
         this.projectId = projectId;
         this.title = title;
         this.recentNoteUpdateDate = recentNoteUpdateDate;
-        this.master = master;
+        this.admin = admin;
     }
     public static ProjectReadDto of(ProjectDetailDto projectTotal, List<ProjectUserMapping> projectUserMappingList){
 
@@ -47,7 +47,7 @@ public class ProjectReadDto {
                 .title(projectTotal.getTitle())
                 .recentNoteUpdateDate(projectTotal.getRecentNoteUpdateDate())
                 // maser = 1 이면 삭제 권한있음
-                .master(projectUserMapping.getRole()==Role.ROLE_ADMIN)
+                .admin(projectUserMapping.getRole()==Role.ROLE_ADMIN)
                 .build();
     }
 }
