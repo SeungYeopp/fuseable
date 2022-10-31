@@ -11,7 +11,7 @@ public class ProjectReadListDto {
     List<ProjectReadDto> projects;
 
     @Builder
-    public ProjectReadListDto(List<ProjectReadDto> projectReadList) {
-        this.projects = projectReadList;
+    public ProjectReadListDto(List<ProjectReadDto> readProjectList) {
+        this.projects = readProjectList;
     }
 }

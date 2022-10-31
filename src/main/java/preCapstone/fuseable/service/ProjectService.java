@@ -43,6 +43,10 @@ public class ProjectService {
         //project id 리스트를 통하여 ID와 Title를 projectTotalList에 넣어주면 됨, recenttime은 추가로 들어감
         List<ProjectDetailDto> projectDetail = projectRepository.findbyProjectId(projectIdList);
 
+        //projectDetail을 stream으로 돌림, map을 통해 projectDetail을 project라고 하고
+        //projectReadDto.of의 내용으로 변환. 이때 사용들어가야할 내용은
+        //projectId,title,recentNoteUpdateDate,admin
+        //이것을 뽑아내서 list로 만들어 return을 해주는 것
         return projectDetail.stream()
                 .map(project ->
                         ProjectReadDto
@@ -53,7 +57,8 @@ public class ProjectService {
     @Transactional
     public ProjectCreateDto createProject(ProjectTitleDto titleDto, User currentUser) {
 
-        // 프로젝트 생성하고 project에 담음
+        //titleDto의 toEntity를 통해 제목을 projectRepository에 저장
+        //그 이후 project안에 넣음
         Project project = projectRepository.save(Project.toEntity(titleDto));
 
         // 프로젝트와 유저 매핑 테이블에도 저장 , 현재 user와 project, Role을 요구로하므로 이 사항들을 build해줌
@@ -73,14 +78,14 @@ public class ProjectService {
     @Transactional
     public ProjectDeleteDto deleteProject(Long projectId, User currentUser) {
 
-        ProjectUserMapping projectUserMapping = projectUserMappingRepository.findByUserIdAndProjectId(currentUser.getUserCode(), projectId);
+        //유저가 해당 project에 있는지 확인 후 role/user/projectid/project title등 획득
+        Optional<ProjectUserMapping> projectUserMapping
+                = projectUserMappingRepository.findByUserIdAndProjectId(currentUser.getUserCode(), projectId);
 
         // Project의 Admin인지 확인 권한 확인
-        if (!projectUserMapping.getRole().equals(Role.ROLE_ADMIN)) {
-            throw new ApiRequestException("프로젝트 소유주가 아닙니다.");
+        if (!projectUserMapping.get().getRole().equals(Role.ROLE_ADMIN)) {
+            throw new ApiRequestException("Admin 권한이 없습니다.");
         }
-
-        ProjectUserMapping projectUserMapping = ProjectUserMappingRepository.findbyUserId(currentUser.getUserCode());
 
         // UserProjectMapping 테이블에서 삭제
         projectUserMapping.deleteByProjectId(projectId);
@@ -88,17 +93,36 @@ public class ProjectService {
         // Project 테이블에서 Project 삭제
         projectRepository.deleteById(projectId);
 
+        // Project-User간의 관계에서도 projectId를 기준으로 삭제한다.
+        projectUserMappingRepository.deleteByProjectId(projectId);
+
         //추후에 필요한 repository 삭제 목록 쓰기
 
+
+        //일 다하고 return
         return ProjectDeleteDto.builder()
                 .projectId(projectId)
                 .build();
     }
 
-    @Transactional
-    public ProjectSelectDto selectDto(Long projectId, User CurrentUser){
+    @Transactional(readOnly = true)
+    public ProjectSelectDto selectProject(Long projectId, User currentUser){
 
-        return
+        //project ID를 통해서 projectid/title/recentupdatedate들어감
+        ProjectDetailDto projectDetail = projectRepository.findByProjectId(projectId);
+
+        //projectId를 통해 Crew원의 id들을 찾고 이를 ListDto로 묶음
+        ProjectCrewListDto crewList = projectUserMappingRepository.findCrewByProjectId(projectId);
+
+        //projectId를 통해 role도 받음
+        ProjectUserMapping projectUserMapping
+                = projectUserMappingRepository.findByProjectId(currentUser.getUserCode(), projectId);
+
+        //note에 관한 부분 넣기, kanban 연계
+
+
+        //총 title/role/crew/note/recentupdatetime이 들어가게 되는것
+        return ProjectSelectDto.fromEntity(projectDetail, crewList, projectUserMapping, note)
     }
 
 }
