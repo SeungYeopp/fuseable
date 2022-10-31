@@ -10,7 +10,7 @@ public class ProjectCreateDto {
     private String title;
 
     @Builder
-    public ProjectCreateDto(Long projectId, String title, String detail) {
+    public ProjectCreateDto(Long projectId, String title) {
         this.projectId = projectId;
         this.title = title;
     }
