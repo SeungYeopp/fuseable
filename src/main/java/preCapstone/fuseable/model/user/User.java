@@ -17,7 +17,7 @@ public class User {
 
     @Id                                                  //PK
     @GeneratedValue(strategy = GenerationType.IDENTITY)  //필드명과 컬럼명이 다를 때 사용 (user code 대 user_code)
-    @Column(name = "user_code")                          //필드(열) 이름
+    @Column(name = "USER_ID")                          //필드(열) 이름
     private Long userCode;
 
     @Column(name = "kakao_id")                           //필드(열) 이름

@@ -41,10 +41,10 @@ public class ProjectController {
     }
 
     //프로젝트 선택
-    @GetMapping("/{projectId}")
+    /*@GetMapping("/{projectId}")
     public ProjectSelectDto selectProject (@PathVariable Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return projectService.selectProject(projectId, userDetails.getUser());
-    }
+    }*/
 
     // 초대 (보류)
 }

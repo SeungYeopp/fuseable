@@ -33,7 +33,7 @@ public class ProjectService {
 
         //현재 사용자의 project-user간의 매핑 확인하여 리스트로 만듬
         //Usercode(ID)를 통해서 현재 해당 유저가 매핑되어있는 프로젝트(타이틀과 프로젝트id)/해당 프로젝트의 Role을 받음. Seq을 통한 정리
-        List<ProjectUserMapping> projectUserMappingList = ProjectUserMappingRepository.findbyUserId(currentUser.getUserCode());
+        List<ProjectUserMapping> projectUserMappingList = projectUserMappingRepository.findByUserId(currentUser.getUserCode());
 
         //위에서 얻은 프로젝트에 대해 프로젝트 Id만을 루프를 통하여 모음
         List<Long> projectIdList = projectUserMappingList.stream()
@@ -41,7 +41,7 @@ public class ProjectService {
                 .collect(Collectors.toList());
 
         //project id 리스트를 통하여 ID와 Title를 projectTotalList에 넣어주면 됨, recenttime은 추가로 들어감
-        List<ProjectDetailDto> projectDetail = projectRepository.findbyProjectId(projectIdList);
+        List<ProjectDetailDto> projectDetail = projectRepository.findByProjectId(projectIdList);
 
         //projectDetail을 stream으로 돌림, map을 통해 projectDetail을 project라고 하고
         //projectReadDto.of의 내용으로 변환. 이때 사용들어가야할 내용은
@@ -88,7 +88,7 @@ public class ProjectService {
         }
 
         // UserProjectMapping 테이블에서 삭제
-        projectUserMapping.deleteByProjectId(projectId);
+        projectUserMappingRepository.deleteByProjectId(projectId);
 
         // Project 테이블에서 Project 삭제
         projectRepository.deleteById(projectId);
@@ -105,6 +105,7 @@ public class ProjectService {
                 .build();
     }
 
+    /*
     @Transactional(readOnly = true)
     public ProjectSelectDto selectProject(Long projectId, User currentUser){
 
@@ -122,7 +123,7 @@ public class ProjectService {
 
 
         //총 title/role/crew/note/recentupdatetime이 들어가게 되는것
-        return ProjectSelectDto.fromEntity(projectDetail, crewList, projectUserMapping, note)
-    }
+        return ProjectSelectDto.fromEntity(projectDetail, crewList, projectUserMapping, note);
+    }*/
 
 }
