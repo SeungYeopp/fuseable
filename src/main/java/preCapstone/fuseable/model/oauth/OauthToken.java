@@ -1,8 +1,10 @@
 package preCapstone.fuseable.model.oauth;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OauthToken { //OauthToken클래스 안의 내용
 
     private String access_token;
