@@ -3,10 +3,7 @@ package preCapstone.fuseable.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import preCapstone.fuseable.dto.note.NoteCreateDto;
-import preCapstone.fuseable.dto.note.NoteDeleteDto;
-import preCapstone.fuseable.dto.note.NoteDetailDto;
-import preCapstone.fuseable.dto.note.NoteUpdateDto;
+import preCapstone.fuseable.dto.note.*;
 import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.NoteService;
 
@@ -33,10 +30,22 @@ public class NoteController {
 
     //노트 업데이트, 노트 위치 변경
     //움직임과 관련된 Dto 하나 필요
+
     @PutMapping("/notes/{noteId}")
-    public NoteUpdateDto moveNote(@PathVariable("noteId") Long noteId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.moveNote(noteId, userDetails.getUser());
+    public NoteUpdateDto moveNote(@PathVariable("noteId") Long noteId, @RequestBody NoteMoveDto noteMove, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.moveNote(noteId,noteMove, userDetails.getUser());
     }
+
+
+    /*
+    //노트읽기,프론트에서 처리한듯
+    @GetMapping("/{projectId}")
+    public NoteKanbanReadDto readKanban(@PathVariable("projectId") Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.readKanban(projectId, userDetails.getUser());
+    }
+     */
+
+
 
 
 

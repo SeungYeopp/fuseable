@@ -9,6 +9,7 @@ import preCapstone.fuseable.model.project.Role;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public class ProjectSelectDto {
@@ -22,22 +23,22 @@ public class ProjectSelectDto {
 
     private Role role;
 
-    private Note note;
+    private List<Note> note;
 
     @Builder
-    public ProjectSelectDto(List<ProjectCrewDto> crewList, String title,Role role, Note note) {
+    public ProjectSelectDto(List<ProjectCrewDto> crewList, String title,Role role, List<Note> note) {
         this.crewList = crewList;
         this.title = title;
         this.role = role;
         this.note = note;
     }
 
-    public static ProjectSelectDto fromEntity (ProjectCrewListDto crew, ProjectUserMapping projectDetail, Note note) {
+    public static ProjectSelectDto fromEntity (ProjectCrewListDto crew, ProjectUserMapping projectDetail, List<Note> noteList) {
         return ProjectSelectDto.builder()
                 .crewList(crew.getCrews())
                 .title(projectDetail.getProject().getTitle())
                 .role(projectDetail.getRole())
-                .note(note)
+                .note(noteList)
                 .build();
     }
 }

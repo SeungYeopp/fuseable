@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import preCapstone.fuseable.dto.note.NoteDetailDto;
 import preCapstone.fuseable.model.Timestamped;
 import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.user.User;
@@ -45,22 +46,24 @@ public class Note extends Timestamped {
     @Column(name = "STEP")
     private Step step;
 
+
+    //Note의 전 ID, 순서용
+    @Column(name = "PREVIOUS")
+    private Long previousId;
+
+    //Note의 다음 ID, 순서용
+    @Column(name = "NEXT")
+    private Long nextId;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
 
     //현 프로젝트
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID")
-    private Project project;
+    private Long projectId;
 
-    //Note의 뒷 ID
-    @Column(name = "PREVIOUS")
-    private Long previousId;
-
-    //Note의 앞 ID, 순서용
-    @Column(name = "NEXT")
-    private Long nextId;
 
     //유저 닉네임이나 유저 ID로 해야할듯
     @Column(name = "WRITER_ID")
@@ -69,45 +72,40 @@ public class Note extends Timestamped {
 
     @Builder
 
-    public Note(Long noteId, String title, String content,  LocalDate startAt, LocalDate endAt, Step step, User user, Project project, Long previousId, Long nextId, Long writerId) {
+    public Note(Long noteId, String title, String content,  LocalDate startAt, LocalDate endAt, Step step, User user, Long projectId, Long nextId, Long previousId, Long writerId) {
         this.noteId = noteId;
         this.title = title;
         this.content = content;
         this.startAt = startAt;
         this.endAt = endAt;
-        this.step = step;
         this.user = user;
-        this.project = project;
-        this.previousId = previousId;
-        this.nextId = nextId;
+        this.projectId = projectId;
         this.writerId = null;
+        this.step = step;
+        this.nextId = nextId;
+        this.previousId = previousId;
     }
-//    @Builder
-//    public Note(String title, String content, LocalDate date, Step step, User user, Project project, Long previousId, Long nextId) {
-//        this.title = title;
-//        this.content = content;
-//        this.date = date;
-//        this.step = step;
-//        this.user = user;
-//        this.project = project;
-//        this.previousId = previousId;
-//        this.nextId = nextId;
-//        this.writerId = null;
-//    }
 
+    public void updatenextId(Long nextId) {
+        this.nextId = nextId;
+    }
 
-//    public static Note of(NoteCreateRequestDto noteCreateRequestDto, LocalDate deadline, Step step, User user, Project project, Long previousId, Long nextId) {
-//        return Note.builder()
-//                .title(noteCreateRequestDto.getTitle())
-//                .content(noteCreateRequestDto.getContent())
-//                .deadline(deadline)
-//                .step(step)
-//                .user(user)
-//                .project(project)
-//                .previousId(previousId)
-//                .nextId(nextId)
-//                .build();
-//    }
+    public void updatepreviousId(Long previousId) {
+        this.previousId = nextId;
+    }
+
+    public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId, Long previousId, Long nextId) {
+        return Note.builder()
+            .title(noteDetail.getTitle())
+            .content(noteDetail.getContent())
+            .endAt(endAt)
+            .step(step)
+            .user(user)
+            .projectId(projectId)
+            .previousId(previousId)
+            .nextId(nextId)
+            .build();
+    }
 
 
 }
