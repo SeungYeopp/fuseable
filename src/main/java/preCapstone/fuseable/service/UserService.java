@@ -45,7 +45,7 @@ public class UserService {
         params.add("client_id", "a8c0f54a40e17de117e2f618394a3e20");
         params.add("redirect_uri", "http://localhost:3000/redirect");
         params.add("code", code);
-        // params.add("client_secret", "{시크릿 키}"); // 생략 가능!
+//         params.add("client_secret", "bang"); // 생략 가능!
 
         //HttpEntity 생성, header + body를 하나에 담음
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =

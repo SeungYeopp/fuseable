@@ -32,7 +32,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         }
     }
 
-    //status, contentType,오류 메시지등을 답아 응답해주는 메소드
+    //status, contentType,오류 메시지등을 담아 응답해주는 메소드
     private void setResponse(HttpServletResponse response, String errorCode) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");

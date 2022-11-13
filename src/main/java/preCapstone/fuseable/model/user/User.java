@@ -49,4 +49,8 @@ public class User {
         this.kakaoEmail = kakaoEmail;
         this.userRole = userRole;
     }
+
+    public static User of(Long kakaoId, String kakaoProfileImg, String kakaoNickname, String kakaoEmail, String userRole) {
+        return new User(kakaoId, kakaoProfileImg, kakaoNickname, kakaoEmail, userRole);
+    }
 }
