@@ -36,10 +36,10 @@ public class Note extends Timestamped {
     private String content;
 
     @Column(name = "START_DATE")
-    private LocalDateTime startAt;
+    private LocalDate startAt;
 
     @Column(name = "END_DATE")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STEP")
@@ -49,22 +49,27 @@ public class Note extends Timestamped {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    //현 프로젝트
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID")
     private Project project;
 
+    //Note의 뒷 ID
     @Column(name = "PREVIOUS")
     private Long previousId;
 
+    //Note의 앞 ID, 순서용
     @Column(name = "NEXT")
     private Long nextId;
 
+    //유저 닉네임이나 유저 ID로 해야할듯
     @Column(name = "WRITER_ID")
     private Long writerId;
 
+
     @Builder
 
-    public Note(Long noteId, String title, String content, LocalDateTime startAt, LocalDateTime endAt, Step step, User user, Project project, Long previousId, Long nextId, Long writerId) {
+    public Note(Long noteId, String title, String content,  LocalDate startAt, LocalDate endAt, Step step, User user, Project project, Long previousId, Long nextId, Long writerId) {
         this.noteId = noteId;
         this.title = title;
         this.content = content;

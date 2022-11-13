@@ -105,25 +105,22 @@ public class ProjectService {
                 .build();
     }
 
-    /*
+
     @Transactional(readOnly = true)
     public ProjectSelectDto selectProject(Long projectId, User currentUser){
 
-        //project ID를 통해서 projectid/title/recentupdatedate들어감
-        ProjectDetailDto projectDetail = projectRepository.findByProjectId(projectId);
 
         //projectId를 통해 Crew원의 id들을 찾고 이를 ListDto로 묶음
         ProjectCrewListDto crewList = projectUserMappingRepository.findCrewByProjectId(projectId);
 
         //projectId를 통해 role도 받음
-        ProjectUserMapping projectUserMapping
-                = projectUserMappingRepository.findByProjectId(currentUser.getUserCode(), projectId);
+        Optional<ProjectUserMapping> projectUserMapping
+                = projectUserMappingRepository.findByUserIdAndProjectId(currentUser.getUserCode(), projectId);
 
         //note에 관한 부분 넣기, kanban 연계
 
-
-        //총 title/role/crew/note/recentupdatetime이 들어가게 되는것
-        return ProjectSelectDto.fromEntity(projectDetail, crewList, projectUserMapping, note);
-    }*/
+        //총 title/role/crew/note이 들어가게 되는것
+        return ProjectSelectDto.fromEntity(crewList, projectUserMapping, note);
+    }
 
 }
