@@ -39,7 +39,7 @@ public class ArticleController {
         return "articles/index";
     }
 
-    // 상세 조회
+    // 상세 페이지
     @GetMapping("/{articleId}")
     public String article(@PathVariable Long articleId, ModelMap map) {
         ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId));
