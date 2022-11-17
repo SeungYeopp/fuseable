@@ -1,13 +1,18 @@
 package preCapstone.fuseable.dto.note;
 
+import lombok.Builder;
 import lombok.Getter;
+import preCapstone.fuseable.model.note.Note;
+
+import java.util.List;
 
 @Getter
 public class NoteMoveDto {
 
-    //옮겨질 곳의 step, 전 후 id
-    private String step;
-    private Long newPreviousId;
-    private Long newNextId;
+    private List<Note> note;
 
+    @Builder
+    public NoteMoveDto(List<Note> note) {
+        this.note = note;
+    }
 }
