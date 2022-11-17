@@ -24,17 +24,27 @@ public class NoteController {
 
     //노트 삭제
     @DeleteMapping("/{projectId}")
-    public NoteDeleteDto deleteNote(@PathVariable("noteId") Long noteId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.deleteNote(noteId, userDetails.getUser());
+    public NoteDeleteDto deleteNote(@PathVariable Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.deleteNote(projectId, userDetails.getUser());
     }
 
     //노트 업데이트, 노트 위치 변경
-    //움직임과 관련된 Dto 하나 필요
-
-    @PutMapping("/notes/{noteId}")
-    public NoteUpdateDto moveNote(@PathVariable("noteId") Long noteId, @RequestBody NoteMoveDto noteMove, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    //NoteMoveDto에는 전, 후의 id와 step(바뀔 곳) 필요
+    @PutMapping("{projectId}")
+    public NoteMoveDto moveNote(@PathVariable Long noteId,
+                                      @RequestBody NoteMoveDetailDto noteMove,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return noteService.moveNote(noteId,noteMove, userDetails.getUser());
     }
+
+    /*
+    //노트 수정
+    @PutMapping("/notes/details/{noteId}")
+    public NoteUpdateResponseDto updateNote(@PathVariable("noteId") Long noteId,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                            @RequestBody NoteUpdateRequestDto noteUpdateRequestDto) {
+        return noteService.updateNoteDetail(noteId, userDetails.getUser(), noteUpdateRequestDto);
+        //  서비스의 메소드명은 변경될수있습니다.
 
 
     /*

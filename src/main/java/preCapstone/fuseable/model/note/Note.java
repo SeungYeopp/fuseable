@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 import preCapstone.fuseable.dto.note.NoteDetailDto;
+import preCapstone.fuseable.dto.note.NoteMoveDetailDto;
 import preCapstone.fuseable.model.Timestamped;
-import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.user.User;
 
 import javax.persistence.Entity;
@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -92,6 +91,12 @@ public class Note extends Timestamped {
 
     public void updatepreviousId(Long previousId) {
         this.previousId = nextId;
+    }
+
+    public void updateMove(NoteMoveDetailDto noteMove) {
+        this.step = noteMove.getNewStep();
+        this.previousId = noteMove.getNewNoteId();
+        this.nextId = noteMove.getNewNoteId() + 2 ;
     }
 
     public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId, Long previousId, Long nextId) {

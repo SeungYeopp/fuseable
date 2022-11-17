@@ -2,8 +2,8 @@ package preCapstone.fuseable.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import preCapstone.fuseable.config.TotalUtil;
 import preCapstone.fuseable.dto.file.FileDetailDto;
@@ -12,7 +12,6 @@ import preCapstone.fuseable.exception.ApiRequestException;
 import preCapstone.fuseable.model.file.File;
 import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.note.Step;
-import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
 import preCapstone.fuseable.model.user.User;
 import preCapstone.fuseable.repository.file.FileRepository;
@@ -23,11 +22,7 @@ import preCapstone.fuseable.repository.user.UserRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import static preCapstone.fuseable.model.project.QProjectUserMapping.projectUserMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -170,27 +165,42 @@ public class NoteService {
                 .build();
     }
 
-/*
-    @Transactional
-    public NoteUpdateDto moveNote(Long noteId, NoteMoveDto noteMove, User currentUser){
 
-        // 수정하려는 노트가 존재하지 않으면 Exception 반환.
+    //transaction 중 가장 엄격한 레벨의 어노테이션 , 동시성이 가장 높지만 다른 사람이 작업 중 건드릴 수 없음
+    //칸반은 유저의 작업이라고 할만한 절차가 적으므로 괜찮음
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public NoteMoveDto moveNote(Long noteId, NoteMoveDetailDto noteMove, User currentUser){
+
+        // 수정하려는 노트가 기존 id를 통해 검색했을 때 존재하지 않으면 Exception 반환.
+        //해당 노트의 정보를 keep 하고 있음
         Note currentNote = noteRepository.findById(noteId).orElseThrow(() -> new ApiRequestException("수정하려는 노트가 존재하지 않음"));
 
+        currentNote.updateMove(noteMove);
+
+        //프론트의 배열은 0번부터, db의 id는 1부터 시작한다고 생각했음(0부터 가능하면 +1로)
+        //예를들어 20개의 노트 배열이 있을때, 배열[2]번 노트가 배열[5]번으로 이동했다면
+        //백엔드에선 3번 id가 빠지고 4,5,6이 한칸씩 앞으로 간 뒤, 3번이 6번 id자리를 채우는 형식
+        for(Long noteNumNow= noteMove.getNoteId() + 2 ;noteNumNow < noteMove.getNewNoteId() + 2 ;noteNumNow++) {
+            noteRepository.findByIdAndUpdateId(noteNumNow);
+        }
+
+        //위에서 업데이트 시킨 note 정보와 새로운 위치를 넘겨주어 저장케함
+        noteRepository.saveNoteById(currentNote,noteMove.getNewNoteId());
+
         // Project로 전체 노트 리스트 가져오기
-        List<Note> rawNoteList = noteRepository.findByProject(currentNote.getProject());
+        List<Note> noteList = noteRepository.findByProject(currentNote.getProject());
 
-        Long toPreNoteId = noteMove.getNewPreviousId();
-        Long toNextNoteId = noteMove.getNewNextId();
-
-        return;
+        //전체 리스트를 재반환
+        return NoteMoveDto.builder()
+                .note(noteList)
+                .build();
     }
 
- */
 
 
 
-    //front에서 요청한 사항인데, 바뀔 수 있음음
+
+    //front에서게 넘겨줄 데이터 옵션 중 하나, 상황봐야함
    /*
     @Transactional
     public NoteKanbanReadDto readKanban(Long projectId, User currentUser) {

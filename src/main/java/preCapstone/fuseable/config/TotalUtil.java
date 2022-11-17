@@ -38,8 +38,6 @@ public class TotalUtil {
                 .collect(Collectors.toMap(Note::getNoteId, note -> note));
     }
 
-
-
     //2차원 배열을 위한 부분
     public List<List<NoteReadDto>> getStepList(List<Note> totalNoteList, Map<Long, Note> hashMap) {
 
@@ -84,6 +82,8 @@ public class TotalUtil {
 
         return stepTotalList;
     }
+
+
 
     /*
     public int getLimitOfFile() {
