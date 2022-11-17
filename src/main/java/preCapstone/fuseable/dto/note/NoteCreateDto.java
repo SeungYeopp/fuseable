@@ -2,10 +2,12 @@ package preCapstone.fuseable.dto.note;
 
 import lombok.Builder;
 import lombok.Getter;
+import preCapstone.fuseable.dto.file.FileDetailDto;
 import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.note.Step;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 public class NoteCreateDto {
@@ -18,6 +20,8 @@ public class NoteCreateDto {
     private String endAt;
     private String step;
 
+    private List<FileDetailDto> files;
+
     @Builder
     public NoteCreateDto(Long noteId, String title, String content, LocalDate endAt, Step step) {
         this.noteId = noteId;
@@ -27,7 +31,7 @@ public class NoteCreateDto {
         this.step = step.toString();
     }
 
-    public static NoteCreateDto of(Note note) {
+    public static NoteCreateDto fromEntity(Note note) {
         return NoteCreateDto.builder()
                 .noteId(note.getNoteId())
                 .title(note.getTitle())
@@ -35,5 +39,11 @@ public class NoteCreateDto {
                 .endAt(note.getEndAt())
                 .step(note.getStep())
                 .build();
+    }
+
+    //file 업로드 관련
+    public void uploadFile(List<FileDetailDto> files) {
+
+        this.files = files;
     }
 }
