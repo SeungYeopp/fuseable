@@ -46,19 +46,22 @@ public class NoteService {
     @Transactional
     public NoteCreateDto createNote (Long projectId, NoteDetailDto noteDetail, User currentUser) {
 
-        //projectID를 통하여 노트 리스트를 받는다.
+        //projectID를 통하여 노트 리스트 전부를 받는다.
         List<Note> noteList = noteRepository.findByProjectId(projectId);
 
-        //들어온 note의 step 확인, date는 string to LocalDate 형식, build를 위한 준비물
+        //새로 create 된 note의 step 확인, date는 string to LocalDate, build를 위한 준비물
         Step step = Step.valueOf(noteDetail.getStep());
         LocalDate endAt = totalUtil.changeType(noteDetail.getEndAt());
 
 
-        //해당 step에 가장 마지막 note을 찾으며 (next noteId == 0 인 노트), 없는 경우 Null을 준다다
+        /*
+        //해당 step에 가장 마지막 note을 찾으며 (next noteId == 0 인 노트), 없는 경우 Null을 준다
         Note lastNote = totalUtil.getTopNoteList(noteList)
                 .stream()
                 .filter(note -> note.getStep().equals(step))
                 .findFirst().orElse(null);
+         */
+
 
 
         //file의 url, name
