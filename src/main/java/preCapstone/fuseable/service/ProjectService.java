@@ -16,6 +16,7 @@ import preCapstone.fuseable.repository.project.ProjectRepository;
 import preCapstone.fuseable.repository.project.ProjectUserMappingRepository;
 
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,10 +124,14 @@ public class ProjectService {
                 = projectUserMappingRepository.findByUserIdAndProjectId(currentUser.getUserCode(), projectId);
 
         //note에 관한 부분 넣기, kanban 연계
-        List<Note> noteList = noteRepository.findbyProjectID(projectId);
+        List<Note> noteList = noteRepository.findbyProjectId(projectId);
+
+        //ArrayId 기준으로 정렬
+        List<Note> sortedList = noteList.stream()
+                .sorted(Comparator.comparing(Note::getArrayId)).toList();
 
         //총 title/role/crew/note이 들어가게 되는것
-        return ProjectSelectDto.fromEntity(crewList, projectUserMapping, noteList);
+        return ProjectSelectDto.fromEntity(crewList, projectUserMapping, sortedList);
     }
 
 }

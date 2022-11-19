@@ -10,7 +10,7 @@ import preCapstone.fuseable.service.ProjectService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/project")
+@RequestMapping("/project")
 @Slf4j
 public class ProjectController {
 

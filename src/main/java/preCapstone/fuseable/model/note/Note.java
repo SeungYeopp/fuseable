@@ -47,17 +47,13 @@ public class Note extends Timestamped {
     @Column(name = "STEP")
     private Step step;
 
-
-    /* linked list를 사용하는 경우에만 필요함
-    //Note의 전 ID, 순서용
+    //Note의 앞선 noteid, 즉 숫자가 더 낮은 id
     @Column(name = "PREVIOUS")
     private Long previousId;
 
-    //Note의 다음 ID, 순서용
+    //Note의 뒤에오는 noteid, 즉 숫자가 더 높은 id
     @Column(name = "NEXT")
     private Long nextId;
-     */
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
@@ -72,10 +68,18 @@ public class Note extends Timestamped {
     @Column(name = "WRITER_ID")
     private Long writerId;
 
+    //front의 배열 순서를 위한 배열 id
+    @Column(name ="Array_ID")
+    private Long arrayId;
+
 
     @Builder
 
-    public Note(Long noteId, String title, String content,  LocalDate startAt, LocalDate endAt, Step step, User user, Long projectId, Long writerId) {
+    public Note(Long noteId, String title, String content,
+                LocalDate startAt, LocalDate endAt, Step step,
+                User user, Long projectId, Long writerId,
+                Long nextId, Long previousId, Long arrayId) {
+
         this.noteId = noteId;
         this.title = title;
         this.content = content;
@@ -85,31 +89,38 @@ public class Note extends Timestamped {
         this.projectId = projectId;
         this.writerId = null;
         this.step = step;
+        this.previousId=previousId;
+        this.nextId=nextId;
+        this.arrayId=arrayId;
     }
 
-    /* linked list를 사용하는 경우에만 필요함
+
     public void updatenextId(Long nextId) {
         this.nextId = nextId;
     }
 
     public void updatepreviousId(Long previousId) {
-        this.previousId = nextId;
+        this.previousId = previousId;
     }
-     */
 
     public void updateMove(NoteMoveDetailDto noteMove) {
+
         this.step = noteMove.getNewStep();
+        this.arrayId = noteMove.getArrayId();
     }
 
-    public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId) {
+    public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId, Long previousId, Long nextId, Long arrayId) {
         return Note.builder()
-            .title(noteDetail.getTitle())
-            .content(noteDetail.getContent())
-            .endAt(endAt)
-            .step(step)
-            .user(user)
-            .projectId(projectId)
-            .build();
+                .title(noteDetail.getTitle())
+                .content(noteDetail.getContent())
+                .projectId(projectId)
+                .endAt(endAt)
+                .step(step)
+                .user(user)
+                .previousId(previousId)
+                .nextId(nextId)
+                .arrayId(arrayId)
+                .build();
     }
 
 
