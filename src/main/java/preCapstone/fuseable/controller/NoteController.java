@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import preCapstone.fuseable.dto.note.*;
+import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.NoteService;
 
+import java.util.List;
+
 @RequiredArgsConstructor
-@RequestMapping("/api/project")
+@RequestMapping("/project")
 @RestController
 public class NoteController {
 
@@ -17,25 +20,33 @@ public class NoteController {
     //note kanban CRUD
 
     //노트 생성
-    @PostMapping("/{projectId}")
-    public NoteCreateDto createNote(@PathVariable Long projectId, @RequestBody NoteDetailDto noteDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PostMapping("/{projectId}/main")
+    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId,@RequestBody NoteDetailDto noteDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return noteService.createNote(projectId, noteDetail, userDetails.getUser());
     }
 
     //노트 삭제
-    @DeleteMapping("/{projectId}")
-    public NoteDeleteDto deleteNote(@PathVariable Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.deleteNote(projectId, userDetails.getUser());
+    @DeleteMapping("/{projectId}/main")
+    public NoteDeleteDto deleteNote(@PathVariable("projectId") Long projectId,@RequestBody NoteDeleteDetailDto noteDelete, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.deleteNote(projectId, noteDelete, userDetails.getUser());
     }
 
     //노트 업데이트, 노트 위치 변경
     //NoteMoveDto에는 전, 후의 id와 step(바뀔 곳) 필요
-    @PutMapping("{projectId}")
-    public NoteMoveDto moveNote(@PathVariable Long noteId,
-                                      @RequestBody NoteMoveDetailDto noteMove,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.moveNote(noteId,noteMove, userDetails.getUser());
+    @PutMapping("/{projectId}/main")
+    public NoteMoveDto moveNote(@PathVariable("projectId") Long projectId,@RequestBody NoteMoveDetailDto noteMove, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.moveNote(projectId, noteMove, userDetails.getUser());
     }
+
+    \
+    //유저 이름으로 검색
+    @GetMapping("/{projectId}/mynotes")
+    public NoteFindMine findNote(@PathVariable("projectId") Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.findNote(projectId, userDetails.getUser());
+    }
+
+
+
 
     /*
     //노트 수정
@@ -54,9 +65,5 @@ public class NoteController {
         return noteService.readKanban(projectId, userDetails.getUser());
     }
      */
-
-
-
-
 
 }

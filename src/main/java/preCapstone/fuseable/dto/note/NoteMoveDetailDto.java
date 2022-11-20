@@ -7,16 +7,17 @@ import preCapstone.fuseable.model.note.Step;
 @Getter
 public class NoteMoveDetailDto {
 
-    //옮겨질 곳의 step, 전 후 id
+    //step, 전 후 id, projectId
+
     private Step newStep;
-    private Long noteId;
-    private Long newNoteId;
+    private Long arrayId;
+    private Long newArrayId;
 
     @Builder
-    public NoteMoveDetailDto (Step newStep, Long noteId, Long newNoteId) {
+    public NoteMoveDetailDto (Step newStep, Long arrayId, Long newArrayId) {
         this.newStep = newStep;
-        this.noteId = noteId;
-        this.newNoteId = newNoteId;
+        this.arrayId = arrayId;
+        this.newArrayId = newArrayId;
     }
 
 }

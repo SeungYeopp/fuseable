@@ -14,15 +14,16 @@ import java.util.stream.Collectors;
 @Component
 public class TotalUtil {
 
-   // private final int LIMIT_OF_FILES = 5;
+    //file 사이즈 제한
+   private final int LIMIT_OF_FILES = 5;
 
-    public List<Note> getTopNoteList(List<Note> NoteList) {
-        return NoteList
+
+   public List<Note> getLastNote(List<Note> noteList) {
+        return noteList
                 .stream()
-                .filter(note -> note.getNextId().toString().equals("0"))
+                .filter(note -> note.getPreviousId().toString().equals("0"))
                 .collect(Collectors.toList());
     }
-
 
     //문자열(시간)을 Localdate 형식으로 바꿈, 그래야 createnote 서비스에서 return 값과 맞아떨어짐
     public LocalDate changeType(String dateString) {
@@ -30,6 +31,16 @@ public class TotalUtil {
         return date;
     }
 
+    public int getLimitOfFile() {
+        return LIMIT_OF_FILES;
+    }
+
+    public String messageForLimitOfFile() {
+        return "파일이 " + getLimitOfFile() + "가 넘는 크기는 불가합니다";
+    }
+
+
+     /*
     //getStepList를 위한 빌드업용
     //noteList를 통하여 hash 만들어줌
     public Map<Long, Note> getHashMap(List<Note> noteList) {
@@ -83,15 +94,7 @@ public class TotalUtil {
         return stepTotalList;
     }
 
-
-
-    /*
-    public int getLimitOfFile() {
-        return LIMIT_OF_FILES;
-    }
-
-    public String messageForLimitOfFile() {
-        return "파일을 " + getLimitOfFile() + "개 이상 생성할수 없습니다";
-    }
      */
 }
+
+

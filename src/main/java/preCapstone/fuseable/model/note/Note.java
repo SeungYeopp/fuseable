@@ -22,7 +22,9 @@ import java.time.LocalDate;
 public class Note extends Timestamped {
 
     //노트에 필요한 항목
-    //노트Id,노트Title,내용,기간, 스텝, 유저, 해당노트 프로젝트 id, 노트 앞, 노트 뒤, 작성자
+    //노트Id,노트Title,내용,기간, 스텝, 유저, 해당노트 프로젝트 id
+    //노트 앞, 뒤는 linked list인 경우 필요하지만 지금은 필요없음
+    //작성자는 user 가져다 쓰면될듯
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,15 +47,13 @@ public class Note extends Timestamped {
     @Column(name = "STEP")
     private Step step;
 
-
-    //Note의 전 ID, 순서용
+    //Note의 앞선 noteid, 즉 숫자가 더 낮은 id
     @Column(name = "PREVIOUS")
     private Long previousId;
 
-    //Note의 다음 ID, 순서용
+    //Note의 뒤에오는 noteid, 즉 숫자가 더 높은 id
     @Column(name = "NEXT")
     private Long nextId;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
@@ -68,10 +68,18 @@ public class Note extends Timestamped {
     @Column(name = "WRITER_ID")
     private Long writerId;
 
+    //front의 배열 순서를 위한 배열 id
+    @Column(name ="Array_ID")
+    private Long arrayId;
+
 
     @Builder
 
-    public Note(Long noteId, String title, String content,  LocalDate startAt, LocalDate endAt, Step step, User user, Long projectId, Long nextId, Long previousId, Long writerId) {
+    public Note(Long noteId, String title, String content,
+                LocalDate startAt, LocalDate endAt, Step step,
+                User user, Long projectId, Long writerId,
+                Long nextId, Long previousId, Long arrayId) {
+
         this.noteId = noteId;
         this.title = title;
         this.content = content;
@@ -81,35 +89,38 @@ public class Note extends Timestamped {
         this.projectId = projectId;
         this.writerId = null;
         this.step = step;
-        this.nextId = nextId;
-        this.previousId = previousId;
+        this.previousId=previousId;
+        this.nextId=nextId;
+        this.arrayId=arrayId;
     }
+
 
     public void updatenextId(Long nextId) {
         this.nextId = nextId;
     }
 
     public void updatepreviousId(Long previousId) {
-        this.previousId = nextId;
+        this.previousId = previousId;
     }
 
     public void updateMove(NoteMoveDetailDto noteMove) {
+
         this.step = noteMove.getNewStep();
-        this.previousId = noteMove.getNewNoteId();
-        this.nextId = noteMove.getNewNoteId() + 2 ;
+        this.arrayId = noteMove.getArrayId();
     }
 
-    public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId, Long previousId, Long nextId) {
+    public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId, Long previousId, Long nextId, Long arrayId) {
         return Note.builder()
-            .title(noteDetail.getTitle())
-            .content(noteDetail.getContent())
-            .endAt(endAt)
-            .step(step)
-            .user(user)
-            .projectId(projectId)
-            .previousId(previousId)
-            .nextId(nextId)
-            .build();
+                .title(noteDetail.getTitle())
+                .content(noteDetail.getContent())
+                .projectId(projectId)
+                .endAt(endAt)
+                .step(step)
+                .user(user)
+                .previousId(previousId)
+                .nextId(nextId)
+                .arrayId(arrayId)
+                .build();
     }
 
 

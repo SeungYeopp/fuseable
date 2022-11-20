@@ -11,7 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class NoteDetailDto {
 
-    //note의 관한 정보로 제목/내용/마감기한/스텝/파일
+    //note의 관한 정보로 projectid/제목/내용/마감기한/스텝/파일
+
     private String title;
     private String content;
     private String endAt;
