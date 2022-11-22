@@ -12,18 +12,16 @@ import java.util.List;
 
 @Getter
 public class NoteUpdateDto {
-    private Long noteId;
+    private Long arrayId;
     private String title;
     private String content;
-
     private String endAt;
     private String step;
-
     private List<FileDetailDto> files;
 
     @Builder
-    public NoteUpdateDto(Long noteId, String title, String content, LocalDate endAt, Step step) {
-        this.noteId = noteId;
+    public NoteUpdateDto(Long arrayId, String title, String content, LocalDate endAt, Step step) {
+        this.arrayId = arrayId;
         this.title = title;
         this.content = content;
         this.endAt = endAt.toString();
@@ -36,12 +34,14 @@ public class NoteUpdateDto {
 
     public static NoteUpdateDto of(Note note) {
         return NoteUpdateDto.builder()
-                .noteId(note.getNoteId())
+                .arrayId(note.getArrayId())
                 .title(note.getTitle())
                 .content(note.getContent())
                 .endAt(note.getEndAt())
                 .step(note.getStep())
                 .build();
     }
+
+
 
 }

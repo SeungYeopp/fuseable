@@ -12,6 +12,7 @@ import preCapstone.fuseable.exception.ApiRequestException;
 import preCapstone.fuseable.model.file.File;
 import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.note.Step;
+import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
 import preCapstone.fuseable.model.user.User;
 import preCapstone.fuseable.repository.file.FileRepository;
@@ -33,7 +34,7 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
 
-    private final ProjectUserMapping projectUserMapping;
+//    private final ProjectUserMapping projectUserMapping;
 
     private final ProjectUserMappingRepository projectUserMappingRepository;
 
@@ -46,27 +47,20 @@ public class NoteService {
 
 
     @Transactional
-    public NoteCreateDto createNote (Long projectId, NoteDetailDto noteDetail, User currentUser) {
+    public NoteCreateDto createNote (Long projectId, NoteCreateDetailDto noteCreateDetail, User currentUser) {
 
+        //생성 프로세스
+        //해당 프로젝트의
         //projectID를 통하여 해당 프로젝트와 관련된 노트리스트를 전부 받는다.
-        List<Note> noteList = noteRepository.findByProjectId(projectId);
+        Project project = projectRepository.findByOneProjectId(projectId);
+        List<Note> noteList = noteRepository.findAllByProjectId(projectId);
 
-        //새로 create 된 note의 step(String to Step)확인, date는 String to LocalDate, build를 위한 준비물
-        Step step = Step.valueOf(noteDetail.getStep());
-        LocalDate endAt = totalUtil.changeType(noteDetail.getEndAt());
-
-        //가장 마지막 note을 찾으며 (next noteId == 0 인 노트), 없는 경우 Null을 준다
-        //note의 앞선 id가 있는지 알아야하므로 진행함
+        Step step = Step.valueOf(noteCreateDetail.getStep());
 
         Note lastNote = totalUtil.getLastNote(noteList)
                 .stream()
                 .findFirst().orElse(null);
 
-        //file의 url, name
-        List<FileDetailDto> files = new ArrayList<>(noteDetail.getFiles());
-
-
-        //노트가 하나라도 있는 경우.
         if (lastNote != null)
         {
 
@@ -76,32 +70,19 @@ public class NoteService {
             title/content/endAt/step/user(글쓴이)/projectId/previousId(lastnoteid)/nextId(0)/배열Id
             */
             Note noteSave = noteRepository.save(Note
-                    .of(noteDetail, endAt, step, currentUser, projectId, lastNote.getNoteId(), 0L, lastNote.getArrayId() + 1));
+                    .ofcreate(noteCreateDetail, step, currentUser, project, lastNote.getNoteId(), 0L, lastNote.getArrayId() + 1));
 
             //마지막 노트 다음 노트가 생겼으므로 이를 업데이트 해줌.
             lastNote.updatenextId(noteSave.getNoteId());
 
             //return을 위한 준비
-            NoteCreateDto noteCreateDetail = NoteCreateDto.fromEntity(noteSave);
+            NoteCreateDto note = NoteCreateDto.fromEntity(noteSave);
 
-            //file관련 부분, 파일이름/파일id/유저/저장되는 노트
-            files.stream()
-                    .map(file -> new File(file.getFileName(), file.getFileUrl(), currentUser, noteSave))
-                    .forEach(fileRepository::save);
-
-            //file size가 5mb 보다 크다면 Limit 부여
-            //TotalUtil에서 크기 제한 설정 가능
-            if (files.size() > totalUtil.getLimitOfFile()) {
-                throw new ApiRequestException(totalUtil.messageForLimitOfFile());
-            }
-                //note에 file 도 더해서 넣어줌
-                noteCreateDetail.uploadFile(files);
-
-                //arrayId/title/content/endAt/step/
-                return noteCreateDetail;
+            //arrayId/step/
+            return note;
         }
 
-        //해당 스텝에 노트가 하나도 없는 경우
+        //해당 노트 리스트에 노트가 하나도 없는 경우
         else
         {
             //프론트에서 받아낸 정보를 토대로 noteRepository에 저장, previous, next id, ArrayId 셋다 없으므로 0L(Long)
@@ -110,11 +91,40 @@ public class NoteService {
             title/content/endAt/step/user(글쓴이)/projectId/previousId(lastnoteid)/nextId(0)/배열Id
             */
             Note noteSave = noteRepository.save(Note
-                    .of(noteDetail, endAt, step, currentUser, projectId,0L, 0L, 0L));
+                    .ofcreate(noteCreateDetail, step, currentUser, project,0L, 0L, 0L));
 
             //return을 위한 준비
-            NoteCreateDto noteCreateDetail = NoteCreateDto.fromEntity(noteSave);
+            NoteCreateDto note = NoteCreateDto.fromEntity(noteSave);
 
+
+            //arrayId/step/
+            return note;
+        }
+    }
+    @Transactional
+    public NoteUpdateDto updateNote (Long projectId, NoteUpdateDetailDto noteDetail, User currentUser) {
+
+        Project project = projectRepository.findByOneProjectId(projectId);
+        Note note = noteRepository.findByArrayIdAndProjectId(noteDetail.getArrayId(),projectId);
+
+        //새로 create 된 note의 step(String to Step)확인, date는 String to LocalDate, build를 위한 준비물
+        Step step = Step.valueOf(noteDetail.getStep());
+        LocalDate endAt = totalUtil.changeType(noteDetail.getEndAt());
+
+        //file의 url, name
+        List<FileDetailDto> files = new ArrayList<>(noteDetail.getFiles());
+
+
+            //프론트에서 받아낸 정보를 토대로 noteRepository에 저장, next id는 없으므로 비어있음
+            /*
+            들어가야할 목록
+            title/content/endAt/step/user(글쓴이)/projectId/previousId(lastnoteid)/nextId(0)/배열Id
+            */
+            Note noteSave = noteRepository.save(Note
+                    .of(noteDetail, endAt, step, currentUser, project, note.getPreviousId(), note.getNextId(), note.getArrayId()));
+
+            //return을 위한 준비
+            NoteUpdateDto updatedNote = NoteUpdateDto.of(noteSave);
 
             //file관련 부분, 파일이름/파일id/유저/저장되는 노트
             files.stream()
@@ -127,11 +137,11 @@ public class NoteService {
                 throw new ApiRequestException(totalUtil.messageForLimitOfFile());
             }
                 //note에 file 도 더해서 넣어줌
-                noteCreateDetail.uploadFile(files);
+                updatedNote.uploadFile(files);
 
-                //arrayId/title/content/endAt/step/
-                return noteCreateDetail;
-        }
+                //arrayId/title/content/endAt/step/file
+                return updatedNote;
+
     }
 
 
@@ -143,8 +153,11 @@ public class NoteService {
         //첫 노트는 ArrayId와 projectId를 통해 찾아옴.
         //첫 노트를 기반으로 전 후의 노트를 찾아옴
         Note note = noteRepository.findByArrayIdAndProjectId(noteDelete.getArrayId(),projectId);
-        Note previousNote = noteRepository.findByNoteId(note.getPreviousId()).orElse(null);
-        Note nextNote = noteRepository.findByNoteId(note.getNextId()).orElse(null);
+        Note previousNote = noteRepository.findById(note.getPreviousId()).orElse(null);
+        Note nextNote = noteRepository.findById(note.getNextId()).orElse(null);
+
+        //        NoteResponseDto previousNote = noteRepository.findByNoteId(note.getPreviousId()).orElse(null);
+        // NoteResponseDto nextNote = noteRepository.findByNoteId(note.getNextId()).orElse(null);
 
 
         //Case는 총 4가지로, 혼자이거나, 제일 앞이거나, 제일 뒤거나, 중간인 경우
@@ -157,7 +170,7 @@ public class NoteService {
             nextNote.updatepreviousId(0L);
 
             //삭제될 노트와 같은 프로젝트id 노트중에서 ArrayId보다 큰 것 모두 -1
-            noteRepository.updateArrayId(projectId,note.getArrayId());
+            noteRepository.updateArrayIdByProjectId(projectId,note.getArrayId());
         }
 
         //제일 뒤인 경우
@@ -174,7 +187,7 @@ public class NoteService {
             previousNote.updatenextId(note.getNextId());
 
             //삭제될 노트와 같은 프로젝트id 노트중에서 ArrayId보다 큰 것 모두 -1
-            noteRepository.updateArrayId(projectId,note.getArrayId());
+            noteRepository.updateArrayIdByProjectId(projectId,note.getArrayId());
         }
 
         //Note에 연관된 파일 삭제
@@ -191,7 +204,7 @@ public class NoteService {
         em.flush();
         em.clear();
 
-        List<Note> noteList = noteRepository.findbyProjectId(projectId);
+        List<Note> noteList = noteRepository.findAllByProjectId(projectId);
 
         //ArrayId 기준으로 정렬
         List<Note> sortedList = noteList.stream()
@@ -213,7 +226,7 @@ public class NoteService {
         Note note = noteRepository.findByArrayIdAndProjectId(noteMove.getArrayId(), projectId);
 
         //projectid와 같은 것들 중에 getArrayId 초과 getNewArrayId이하 값 전부 -1
-        noteRepository.updatemoveArrayId(projectId,noteMove.getArrayId(),noteMove.getNewArrayId());
+        noteRepository.updateMoveArrayId(projectId,noteMove.getArrayId(),noteMove.getNewArrayId());
 
         //새로운 step과 배열이 들어감
         note.updateMove(noteMove);
@@ -224,7 +237,7 @@ public class NoteService {
         em.clear();
 
         // Project로 전체 노트 리스트 가져오기
-        List<Note> noteList = noteRepository.findByProjectId(projectId);
+        List<Note> noteList = noteRepository.findAllByProjectId(projectId);
 
         //ArrayId 기준으로 정렬
         List<Note> sortedList = noteList.stream()
@@ -236,10 +249,11 @@ public class NoteService {
                 .build();
     }
 
+    @Transactional
    public NoteFindMine findNote(Long projectId, User currentUser){
 
         //projectId와 userId로 해당 유저의 모든 노트리스트 얻음
-        List<Note> noteList = noteRepository.findByProjectIdAndUserId(projectId,currentUser);
+        List<Note> noteList = noteRepository.findByProjectIdAndUserId(projectId,currentUser.getUserCode());
 
        //ArrayId 기준으로 정렬
        List<Note> sortedList = noteList.stream()
@@ -248,7 +262,6 @@ public class NoteService {
        return NoteFindMine.builder()
                .note(sortedList)
                .build();
-
    }
 
 
@@ -261,7 +274,7 @@ public class NoteService {
     public NoteKanbanReadDto readKanban(Long projectId, User currentUser) {
 
         // Project로 전체 노트 리스트 가져오기
-        List<Note> noteList = noteRepository.findByProject(projectUserMapping.getProject());
+        List<Note> noteList = noteRepository.findAllByProject(projectUserMapping.getProject());
 
         //note의 리스트 생성, hash는 빌드업용
         List<Note> totalNoteList = totalUtil.getTopNoteList(noteList);

@@ -4,9 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import preCapstone.fuseable.dto.note.NoteDetailDto;
+import preCapstone.fuseable.dto.note.NoteCreateDetailDto;
+import preCapstone.fuseable.dto.note.NoteUpdateDetailDto;
 import preCapstone.fuseable.dto.note.NoteMoveDetailDto;
 import preCapstone.fuseable.model.Timestamped;
+import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.user.User;
 
 import javax.persistence.Entity;
@@ -60,9 +62,9 @@ public class Note extends Timestamped {
     private User user;
 
     //현 프로젝트
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID")
-    private Long projectId;
-
+    private Project project;
 
     //유저 닉네임이나 유저 ID로 해야할듯
     @Column(name = "WRITER_ID")
@@ -77,7 +79,7 @@ public class Note extends Timestamped {
 
     public Note(Long noteId, String title, String content,
                 LocalDate startAt, LocalDate endAt, Step step,
-                User user, Long projectId, Long writerId,
+                User user, Project project, Long writerId,
                 Long nextId, Long previousId, Long arrayId) {
 
         this.noteId = noteId;
@@ -86,7 +88,7 @@ public class Note extends Timestamped {
         this.startAt = startAt;
         this.endAt = endAt;
         this.user = user;
-        this.projectId = projectId;
+        this.project = project;
         this.writerId = null;
         this.step = step;
         this.previousId=previousId;
@@ -109,12 +111,26 @@ public class Note extends Timestamped {
         this.arrayId = noteMove.getArrayId();
     }
 
-    public static Note of(NoteDetailDto noteDetail,LocalDate endAt, Step step, User user, Long projectId, Long previousId, Long nextId, Long arrayId) {
+    public static Note of(NoteUpdateDetailDto noteDetail, LocalDate endAt, Step step, User user, Project project, Long previousId, Long nextId, Long arrayId) {
         return Note.builder()
                 .title(noteDetail.getTitle())
                 .content(noteDetail.getContent())
-                .projectId(projectId)
                 .endAt(endAt)
+                .step(step)
+                .project(project)
+                .user(user)
+                .previousId(previousId)
+                .nextId(nextId)
+                .arrayId(arrayId)
+                .build();
+    }
+
+    public static Note ofcreate(NoteCreateDetailDto note,  Step step, User user, Project project,Long previousId,Long nextId,  Long arrayId) {
+        return Note.builder()
+                .title(null)
+                .content(null)
+                .project(project)
+                .endAt(null)
                 .step(step)
                 .user(user)
                 .previousId(previousId)
@@ -122,6 +138,7 @@ public class Note extends Timestamped {
                 .arrayId(arrayId)
                 .build();
     }
+
 
 
 }

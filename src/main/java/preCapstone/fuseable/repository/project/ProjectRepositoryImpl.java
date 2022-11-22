@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import preCapstone.fuseable.dto.project.ProjectDetailDto;
 import preCapstone.fuseable.model.note.QNote;
+import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.QProject;
 
 import javax.persistence.EntityManager;
@@ -12,8 +13,11 @@ import java.util.List;
 public class ProjectRepositoryImpl implements ProjectRepositoryQuerydsl{
 
     private final JPAQueryFactory queryFactory;
+    private final EntityManager em;
+
 
     public ProjectRepositoryImpl(EntityManager em) {
+        this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
 
@@ -34,5 +38,9 @@ public class ProjectRepositoryImpl implements ProjectRepositoryQuerydsl{
                 .groupBy(project.projectId)
                 .orderBy(note.modifiedDate.max().desc())
                 .fetch();
+    }
+
+    public Project findByOneProjectId(Long projectId){
+        return em.find(Project.class, projectId);
     }
 }

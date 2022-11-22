@@ -1,5 +1,9 @@
 package preCapstone.fuseable.repository.note;
 
-public class NoteRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import preCapstone.fuseable.model.note.Note;
+import preCapstone.fuseable.model.project.Project;
+import preCapstone.fuseable.repository.project.ProjectRepositoryQuerydsl;
 
+public interface NoteRepository extends JpaRepository<Note, Long>, NoteRepositoryQuerydsl {
 }

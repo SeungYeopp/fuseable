@@ -4,14 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import preCapstone.fuseable.dto.note.*;
-import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.NoteService;
 
-import java.util.List;
-
 @RequiredArgsConstructor
-@RequestMapping("/project")
+@RequestMapping("")
 @RestController
 public class NoteController {
 
@@ -21,8 +18,14 @@ public class NoteController {
 
     //노트 생성
     @PostMapping("/{projectId}/main")
-    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId,@RequestBody NoteDetailDto noteDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.createNote(projectId, noteDetail, userDetails.getUser());
+    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId,@RequestBody NoteCreateDetailDto noteCreateDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.createNote(projectId, noteCreateDetail, userDetails.getUser());
+    }
+
+    //노트 생성
+    @PostMapping("/{projectId}/main/{noteId}")
+    public NoteUpdateDto updateNote(@PathVariable("projectId") Long projectId, @PathVariable("noteId") Long noteId, @RequestBody NoteUpdateDetailDto noteUpdateDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return noteService.updateNote(projectId, noteUpdateDetail, userDetails.getUser());
     }
 
     //노트 삭제
@@ -38,7 +41,6 @@ public class NoteController {
         return noteService.moveNote(projectId, noteMove, userDetails.getUser());
     }
 
-    \
     //유저 이름으로 검색
     @GetMapping("/{projectId}/mynotes")
     public NoteFindMine findNote(@PathVariable("projectId") Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -46,16 +48,6 @@ public class NoteController {
     }
 
 
-
-
-    /*
-    //노트 수정
-    @PutMapping("/notes/details/{noteId}")
-    public NoteUpdateResponseDto updateNote(@PathVariable("noteId") Long noteId,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                            @RequestBody NoteUpdateRequestDto noteUpdateRequestDto) {
-        return noteService.updateNoteDetail(noteId, userDetails.getUser(), noteUpdateRequestDto);
-        //  서비스의 메소드명은 변경될수있습니다.
 
 
     /*

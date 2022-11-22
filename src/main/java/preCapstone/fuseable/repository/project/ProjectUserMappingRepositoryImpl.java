@@ -3,6 +3,7 @@ package preCapstone.fuseable.repository.project;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
 import preCapstone.fuseable.model.project.QProjectUserMapping;
 
@@ -46,6 +47,14 @@ public class ProjectUserMappingRepositoryImpl implements ProjectUserMappingRepos
                 .execute();
     }
 
+    @Override
+    public List<ProjectUserMapping> findAllByProject(Project project){
+        return queryFactory
+                .selectFrom(projectUserMapping)
+                .innerJoin(projectUserMapping.user)
+                .fetchJoin()
+                .where(projectUserMapping.project.eq(project))
+                .fetch();
+    }
 
-    
 }

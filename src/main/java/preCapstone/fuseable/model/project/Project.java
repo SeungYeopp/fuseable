@@ -24,7 +24,8 @@ public class Project extends Timestamped {
     private String title;
 
 
-    @Builder Project(String title){
+    @Builder
+    public Project(String title){
         this.title = title;
     }
 
@@ -34,6 +35,11 @@ public class Project extends Timestamped {
         return Project.builder()
                 .title(projectTitleDto.getTitle())
                 .build();
+    }
+
+    public void updateTitle (String title)
+    {
+        this.title = title;
     }
 
 

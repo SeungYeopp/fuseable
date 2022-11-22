@@ -33,11 +33,11 @@ public class ProjectSelectDto {
         this.note = note;
     }
 
-    public static ProjectSelectDto fromEntity (ProjectCrewListDto crew, ProjectUserMapping projectDetail, List<Note> noteList) {
+    public static ProjectSelectDto fromEntity (List<ProjectCrewDto> crew, Optional<ProjectUserMapping> projectDetail, List<Note> noteList) {
         return ProjectSelectDto.builder()
-                .crewList(crew.getCrews())
-                .title(projectDetail.getProject().getTitle())
-                .role(projectDetail.getRole())
+                .crewList(crew)
+                .title(projectDetail.get().getProject().getTitle())
+                .role(projectDetail.get().getRole())
                 .note(noteList)
                 .build();
     }
