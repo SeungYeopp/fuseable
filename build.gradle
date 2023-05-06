@@ -7,9 +7,9 @@ buildscript {
 plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+
 	// querydsl 추가
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
-
 	id 'java'
 }
 
@@ -39,9 +39,12 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	implementation 'com.google.code.gson:gson:2.8.7'
 	implementation 'com.auth0:java-jwt:4.0.0'
+
 	//querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -72,16 +75,38 @@ querydsl {
 	jpa = true
 	querydslSourcesDir = querydslDir
 }
-sourceSets{
+sourceSets {
 	main.java.srcDir querydslDir
-}
-configurations{
-	compileOnly{
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
 }
 compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
 //querydsl 추가 끝
+
+////querydsl 추가 시작
+//def querydslDir = "$buildDir/generated/querydsl"
+//
+//querydsl {
+//	jpa = true
+//	querydslSourcesDir = querydslDir
+//}
+//sourceSets{
+//	main.java.srcDir querydslDir
+//}
+//configurations{
+//	compileOnly{
+//		extendsFrom annotationProcessor
+//	}
+//	querydsl.extendsFrom compileClasspath
+//}
+//compileQuerydsl{
+//	options.annotationProcessorPath = configurations.querydsl
+//}
+////querydsl 추가 끝
