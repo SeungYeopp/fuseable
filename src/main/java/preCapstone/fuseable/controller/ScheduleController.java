@@ -44,7 +44,6 @@ public class ScheduleController {
 
     }
 
-    //delete는 필요없을듯
 
 
 

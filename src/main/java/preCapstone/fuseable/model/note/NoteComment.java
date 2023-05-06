@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import preCapstone.fuseable.dto.comment.NoteCommentUpdateDto;
+import preCapstone.fuseable.dto.unused.NoteCommentUpdateDto;
 import preCapstone.fuseable.model.user.User;
 
 import javax.persistence.*;

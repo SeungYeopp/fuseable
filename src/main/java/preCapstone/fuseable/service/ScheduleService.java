@@ -4,11 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import preCapstone.fuseable.dto.project.ProjectCrewDto;
-import preCapstone.fuseable.dto.schedule.ScheduleReadAllDto;
-import preCapstone.fuseable.dto.schedule.ScheduleReadDto;
-import preCapstone.fuseable.dto.schedule.ScheduleUpdateDetailDto;
-import preCapstone.fuseable.dto.schedule.ScheduleUpdateDto;
+import preCapstone.fuseable.dto.schedule.*;
 import preCapstone.fuseable.exception.ApiRequestException;
 import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
@@ -81,7 +77,7 @@ public class ScheduleService {
 
     }
     public ScheduleUpdateDto updateSchedule(Long scheduleId, ScheduleUpdateDetailDto scheduleUpdateDetail) {
-        Optional<Schedule> schedule = scheduleReposiotry.findByIdandUpdateCheckBox(scheduleId);
+        scheduleReposiotry.updateCheckBoxById(scheduleId,scheduleUpdateDetail);
 
         return ScheduleUpdateDto.builder()
                 .checkBox(scheduleUpdateDetail.getCheckBox())
@@ -91,18 +87,46 @@ public class ScheduleService {
     }
     public ScheduleReadAllDto readAllSchedule(Long projectId) {
 
+        //projectId로부터 시작해 프로젝트멤버들을 찾는 내용
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ApiRequestException("해당 프로젝트가 존재하지 않습니다."));
 
         List<ProjectUserMapping> projectUserMapping = projectUserMappingRepository.findAllByProject(project);
 
-        List<ProjectCrewDto> projectCrewDtoList = projectUserMapping.stream().map(
-                crew -> ProjectCrewDto.builder()
+        List<ScheduleCrewDto> scheduleCrewList = projectUserMapping.stream().map(
+                crew -> ScheduleCrewDto.builder()
                         .userId(crew.getUser().getUserCode())
-                        .userName(crew.getUser().getKakaoNickname())
-                        .userPicture(crew.getUser().getKakaoProfileImg())
                         .build()
         ).collect(Collectors.toList());
+
+        //멤버의 숫자만큼 받고, 총집합 넣기
+        int size = scheduleCrewList.size();
+        String[] checkBoxes = new String[size];
+        StringBuilder returnBox = new StringBuilder();
+
+        for (int i = 0; i< size; i++) {
+            ScheduleCrewDto Id = scheduleCrewList.get(i);
+            checkBoxes[i] = scheduleReposiotry.findCheckBoxByUserId(Id.getUserId());
+        }
+
+        //각 멤버들의 시간시간을 check되었는지 확인하여 return할 checkbox를 만드는 loop
+        for(int i = 0;i<70;i++) {
+            int check = 0;
+            for (int j = 0; j<size; j++) {
+                if(check == 1) break;
+
+                if(checkBoxes[j].charAt(i) == '1') {
+                    check = 1;
+                    returnBox.append("1");
+                }
+            }
+            if(check == 0) returnBox.append("0");
+        }
+
+        return ScheduleReadAllDto.builder()
+                .checkBox(String.valueOf(returnBox))
+                .build();
+
 
         
 
