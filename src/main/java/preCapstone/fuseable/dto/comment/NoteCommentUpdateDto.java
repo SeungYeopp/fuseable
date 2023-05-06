@@ -1,4 +1,4 @@
-package preCapstone.fuseable.dto.note;
+package preCapstone.fuseable.dto.comment;
 
 
 import lombok.Builder;

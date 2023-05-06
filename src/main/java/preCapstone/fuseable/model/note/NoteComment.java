@@ -4,7 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import preCapstone.fuseable.dto.note.NoteCommentUpdateDto;
+import preCapstone.fuseable.dto.comment.NoteCommentUpdateDto;
+import preCapstone.fuseable.model.user.User;
 
 import javax.persistence.*;
 
@@ -18,8 +19,13 @@ public class NoteComment {
     @Column(name = "SEQ")
     private Long seq;
 
-    @Column(name ="Note_ID")
-    private Long noteId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "USER_ID")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="NOTE_ID")
+    private Note note;
 
     @Column(name = "COMMENT", columnDefinition = "TEXT")
     private String comment;
@@ -28,9 +34,9 @@ public class NoteComment {
     private Long writerId;
 
     @Builder
-    public NoteComment(Long noteId, String comment, Long writerId) {
-
-        this.noteId=noteId;
+    public NoteComment(User user,Note note, String comment, Long writerId) {
+        this.user = user;
+        this.note = note;
         this.comment=comment;
         this.writerId=writerId;
     }

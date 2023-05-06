@@ -1,8 +1,8 @@
-package preCapstone.fuseable.repository.note;
+package preCapstone.fuseable.repository.comment;
 
 import preCapstone.fuseable.model.note.NoteComment;
 
-public interface NoteCommentRepositoryQuerydsl {
+public interface CommentRepositoryQuerydsl {
 
     NoteComment findByNoteId(Long noteId);
 }

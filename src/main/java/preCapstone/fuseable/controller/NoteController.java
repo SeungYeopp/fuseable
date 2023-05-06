@@ -58,19 +58,6 @@ public class NoteController {
         return noteService.findNote(userId, projectId);
     }
 
-    //댓글
-    //projectId와 arrayId 해당 노트를 찾기위한 것
-    //userId는 writer는 글 작성자를 적기위해서
-
-    @CrossOrigin(origins="*", allowedHeaders = "*")
-    @PostMapping("/main/comment/{projectId}/{arrayId}") //mapping과 pathvariable 수정 필요
-    public NoteCommentDto noteComment(@PathVariable("projectId") Long projectId, @PathVariable("arrayId") Long arrayId, @RequestBody NoteCommentDetailDto noteComment) {
-        return noteService.noteComment(projectId,arrayId,noteComment);
-    }
-
-
-
-
 
 
     /*

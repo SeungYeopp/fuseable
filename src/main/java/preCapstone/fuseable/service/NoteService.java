@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import preCapstone.fuseable.config.TotalUtil;
+import preCapstone.fuseable.dto.comment.CommentCreateDetailDto;
+import preCapstone.fuseable.dto.comment.CommentCreateDto;
 import preCapstone.fuseable.dto.file.FileDetailDto;
 import preCapstone.fuseable.dto.note.*;
 import preCapstone.fuseable.dto.project.ProjectCrewDto;
@@ -18,7 +20,7 @@ import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
 import preCapstone.fuseable.model.user.User;
 import preCapstone.fuseable.repository.file.FileRepository;
-import preCapstone.fuseable.repository.note.NoteCommentRepository;
+import preCapstone.fuseable.repository.comment.CommentRepository;
 import preCapstone.fuseable.repository.note.NoteRepository;
 import preCapstone.fuseable.repository.project.ProjectRepository;
 import preCapstone.fuseable.repository.project.ProjectUserMappingRepository;
@@ -44,7 +46,7 @@ public class NoteService {
     private final TotalUtil totalUtil;
     private final FileRepository fileRepository;
 
-    private final NoteCommentRepository noteCommentRepository;
+    private final CommentRepository noteCommentRepository;
     private final EntityManager em;
 
     //    private final ProjectUserMapping projectUserMapping;
@@ -320,7 +322,7 @@ public class NoteService {
 
 
     @Transactional
-    public NoteCommentDto noteComment(Long projectId, Long arrayId, NoteCommentDetailDto noteDetail) {
+    public CommentCreateDto noteComment(Long projectId, Long arrayId, CommentCreateDetailDto noteDetail) {
 
 
         Note note = noteRepository.findByArrayIdAndProjectId(arrayId, projectId);
@@ -329,7 +331,7 @@ public class NoteService {
 
 
 
-        return NoteCommentDto.builder()
+        return CommentCreateDto.builder()
                 .arrayId(arrayId)
                 .comment(noteComment.getComment())
                 .writerId(noteComment.getWriterId())

@@ -1,15 +1,15 @@
-package preCapstone.fuseable.dto.note;
+package preCapstone.fuseable.dto.comment;
 
 import lombok.Builder;
 
-public class NoteCommentDetailDto {
+public class CommentCreateDetailDto {
 
     private String comment;
 
     private Long writerId;
 
     @Builder
-    public NoteCommentDetailDto(String comment, Long writerId) {
+    public CommentCreateDetailDto(String comment, Long writerId) {
         this.comment=comment;
         this.writerId=writerId;
     }
