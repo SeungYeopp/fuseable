@@ -11,5 +11,5 @@ public interface CommentRepositoryQuerydsl {
 
     void deleteCommentByNoteId(Long noteId);
 
-    void deleteCommentByProjectId(Long projectId);
+//    void deleteCommentByProjectId(Long projectId);
 }

@@ -47,19 +47,19 @@ public class CommentRepositoryImpl implements CommentRepositoryQuerydsl {
                 .execute();
     }
 
-    @Override
-    public void deleteCommentByProjectId(Long projectId) {
-        queryFactory
-                .delete(comment)
-                .where(
-                        comment.note.noteId.in(
-                                JPAExpressions
-                                        .select(note.noteId)
-                                        .from(note)
-                                        .where(note.project.projectId.eq(projectId))
-                        )
-                )
-                .execute();
-    }
+//    @Override
+//    public void deleteCommentByProjectId(Long projectId) {
+//        queryFactory
+//                .delete(comment)
+//                .where(
+//                        comment.note.noteId.in(
+//                                JPAExpressions
+//                                        .select(note.noteId)
+//                                        .from(note)
+//                                        .where(note.project.projectId.eq(projectId))
+//                        )
+//                )
+//                .execute();
+//    }
 
 }
