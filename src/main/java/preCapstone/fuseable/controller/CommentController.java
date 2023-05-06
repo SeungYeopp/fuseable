@@ -1,34 +1,33 @@
 package preCapstone.fuseable.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import preCapstone.fuseable.dto.comment.CommentCreateDetailDto;
+import preCapstone.fuseable.dto.comment.CommentCreateDto;
+import preCapstone.fuseable.dto.comment.CommentDeleteDto;
+import preCapstone.fuseable.dto.comment.CommentListDto;
+import preCapstone.fuseable.model.user.User;
+import preCapstone.fuseable.service.CommentService;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/project")
 @RestController
 public class CommentController {
+    private final CommentService commentService;
 
+    //코멘트 작성
+    @PostMapping("/api/comments/{noteId}")
+    public CommentCreateDto createComment(@PathVariable Long noteId, User user, @RequestBody CommentCreateDto CommentCreateDto){
+        return commentService.createComment(noteId, user, CommentCreateDto);
+    }
 
-    //생성
-    @CrossOrigin
-    @PostMapping("/main/comment/{projectId}/{arrayId}")
-    public CreateComment(@PathVariable("projectId") Long projectId, @PathVariable("arrayId") Long arrayId, @RequestBody CommentCreateDetailDto commentCreate)
-        return commentservice.createComment(projectId, arrayId, commentCreate)
+    //코멘트 읽기
+    @GetMapping("/api/comments/{noteId}")
+    public CommentListDto readComments(@PathVariable Long noteId, User user){
+        return commentService.readComments(noteId, user);
+    }
 
-    //읽기
-    @CrossOrigin
-    @GetMapping("/main/comment/{projectId}/{arrayId}")
-    public ReadComment(@PathVariable("projectId") Long projectId, @PathVariable("arrayId") Long arrayId, @RequestBody read)
-        return commentservice.readComment()
-
-    //삭제
-    @CrossOrigin
-    @GetMapping("/main/comment/{commentId}") //mapping과 pathvariable 수정 필요
-    public DeleteComment(@PathVariable("projectId") Long commentId)
-        return commentservice.deleteComment(commentId)
-
-
-
+    //코멘트 삭제
+    @DeleteMapping("/api/comments/{commentId}")
+    public CommentDeleteDto deleteComment(@PathVariable Long commentId, User user) {
+        return commentService.deleteComment(commentId, user);
+    }
 }

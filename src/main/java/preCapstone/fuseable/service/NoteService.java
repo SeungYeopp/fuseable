@@ -19,6 +19,7 @@ import preCapstone.fuseable.model.note.Step;
 import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
 import preCapstone.fuseable.model.user.User;
+import preCapstone.fuseable.repository.comment.CommentRepository;
 import preCapstone.fuseable.repository.file.FileRepository;
 import preCapstone.fuseable.repository.comment.CommentRepository;
 import preCapstone.fuseable.repository.note.NoteRepository;
@@ -45,6 +46,7 @@ public class NoteService {
     private final UserRepository userRepository;
     private final TotalUtil totalUtil;
     private final FileRepository fileRepository;
+    private final CommentRepository commentRepository;
 
     private final CommentRepository noteCommentRepository;
     private final EntityManager em;
@@ -192,6 +194,8 @@ public class NoteService {
 
         //noteId를 통해 자신 삭제
        noteRepository.deleteNoteById(note.getNoteId());
+
+       commentRepository.deleteCommentByNoteId(note.getNoteId());
 
        //이외에 삭제할 Repository 추후 추가
 

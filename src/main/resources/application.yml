@@ -40,10 +40,10 @@ spring:
       filter:
         enabled: true
 
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
+#  sql:
+#    init:
+#      mode: always
+#      data-locations: classpath:data.sql
 
 #  jackson:
 #    serialization:

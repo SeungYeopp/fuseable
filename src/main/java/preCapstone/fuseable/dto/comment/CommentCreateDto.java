@@ -2,21 +2,19 @@ package preCapstone.fuseable.dto.comment;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class CommentCreateDto {
-
-    //arrayId를 줘야 front에서 넣을 수 있음
-    private Long arrayId;
-
-    private String comment;
-
-    private Long writerId;
+    private Long commentId;
+    private String content;
+    private Long writer;
 
     @Builder
-    public CommentCreateDto(Long arrayId, String comment, Long writerId) {
-        this.arrayId=arrayId;
-        this.comment=comment;
-        this.writerId=writerId;
+    public CommentCreateDto(Long commentId, String content, Long writer) {
+        this.commentId = commentId;
+        this.content = content;
+        this.writer = writer;
     }
 }
