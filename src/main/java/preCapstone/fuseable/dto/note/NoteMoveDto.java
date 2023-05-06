@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 public class NoteMoveDto {
 
-    private List<Note> note;
+    private Long newArrayId;
 
     @Builder
-    public NoteMoveDto(List<Note> note) {
-        this.note = note;
+    public NoteMoveDto(Long newArrayId) {
+        this.newArrayId= newArrayId;
     }
 }

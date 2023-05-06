@@ -14,7 +14,7 @@ import javax.persistence.*;
 @DynamicUpdate
 @Entity
 public class File {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Id
     @Column(name = "FILE_ID")
     private Long fileId;

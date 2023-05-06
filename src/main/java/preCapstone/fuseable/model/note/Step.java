@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Step {
 
-    TODO(0,"Todo"),
-    DOING(1,"Doing"),
-    VERIFY(2,"Verify"),
-    DONE(3,"Done");
+    TODO(1,"TODO"),
+    PROGRESS(2,"PROGRESS"),
+    VERIFY(3,"VERIFY"),
+    DONE(4,"DONE");
 
     private final int id;
     private final String step;

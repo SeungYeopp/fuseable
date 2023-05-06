@@ -13,35 +13,10 @@ import java.util.List;
 @Getter
 public class NoteUpdateDto {
     private Long arrayId;
-    private String title;
-    private String content;
-    private String endAt;
-    private String step;
-    private List<FileDetailDto> files;
 
     @Builder
-    public NoteUpdateDto(Long arrayId, String title, String content, LocalDate endAt, Step step) {
+    public NoteUpdateDto(Long arrayId) {
         this.arrayId = arrayId;
-        this.title = title;
-        this.content = content;
-        this.endAt = endAt.toString();
-        this.step = step.toString();
+
     }
-
-    public void uploadFile(List<FileDetailDto> files) {
-        this.files = files;
-    }
-
-    public static NoteUpdateDto of(Note note) {
-        return NoteUpdateDto.builder()
-                .arrayId(note.getArrayId())
-                .title(note.getTitle())
-                .content(note.getContent())
-                .endAt(note.getEndAt())
-                .step(note.getStep())
-                .build();
-    }
-
-
-
 }

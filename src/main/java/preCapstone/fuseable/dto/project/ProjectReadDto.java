@@ -25,12 +25,15 @@ public class ProjectReadDto {
 
     private Boolean admin;
 
+    private Boolean bookmark;
+
     @Builder
-    public ProjectReadDto(Long projectId, String title,  LocalDateTime recentNoteUpdateDate,Boolean admin) {
+    public ProjectReadDto(Long projectId, String title,  LocalDateTime recentNoteUpdateDate,Boolean admin, Boolean bookmark) {
         this.projectId = projectId;
         this.title = title;
         this.recentNoteUpdateDate = recentNoteUpdateDate;
         this.admin = admin;
+        this.bookmark = bookmark;
     }
 
     //of를 통해 특정 객체를 요소를 갖는 stream

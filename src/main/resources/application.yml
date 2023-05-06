@@ -4,14 +4,52 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+    spring:
+      security:
+        oauth2:
+          client:
+            registration:
+              google:
+                client-id: google-client-id
+                client-secret: google-secret
+            provider:
+              kakao:
+                authorization_uri: https://kauth.kakao.com/oauth/authorize
+                token_uri: https://kauth.kakao.com/oauth/token
+                user-info-uri: https://kapi.kakao.com/v2/user/me
+                user_name_attribute: id
+
+    custom:
+      oauth2:
+        kakao:
+          client-id: kakao-client-id
+
+
 
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-#        show_sql: true
+        #        show_sql: true
         format_sql: true
+    defer-datasource-initialization: true
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+
+#  jackson:
+#    serialization:
+#      fail-on-empty-beans: false
+
 logging.level:
   org.hibernate.SQL: debug
 # org.hibernate.type: trace
+

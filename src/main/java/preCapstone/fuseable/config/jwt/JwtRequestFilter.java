@@ -4,8 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import preCapstone.fuseable.repository.user.UserRepository;
@@ -17,12 +21,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
+
 //1번의 요청마다 1번씩 실행, 프론트 측에서 요청헤더에 넣어보내면 이것이 체크함
+
 @RequiredArgsConstructor
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private final JwtTokenProvider jwtTokenProvider;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -62,5 +72,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         //filter chain에 request와 response 넘김
         filterChain.doFilter(request, response);
+
+
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            // 토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            // SecurityContext 에 Authentication 객체를 저장합니다.
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
     }
 }

@@ -16,4 +16,10 @@ public class NoteFindMine {
     public NoteFindMine(List<Note> note) {
         this.note = note;
     }
+
+    public static NoteFindMine fromEntity (List<Note> noteList) {
+        return NoteFindMine.builder()
+                .note(noteList)
+                .build();
+    }
 }

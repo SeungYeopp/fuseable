@@ -81,13 +81,19 @@ public class NoteRepositoryImpl implements NoteRepositoryQuerydsl {
                 .where(note.project.projectId.eq(projectId).and(note.arrayId.gt(arrayId)))
                 .execute();
     }
-
     @Override
-    public void updateMoveArrayId(Long projectId, Long arrayId, Long newArrayId) {
+    public void updateMoveFrontArrayId(Long projectId, Long arrayId, Long newArrayId) {
+        queryFactory
+                .update(note)
+                .set(note.arrayId, note.arrayId.add(1))
+                .where(note.project.projectId.eq(projectId).and(note.arrayId.lt(arrayId)).and(note.arrayId.goe(newArrayId))).execute();
+    }
+    @Override
+    public void updateMoveBackArrayId(Long projectId, Long arrayId, Long newArrayId) {
         queryFactory
                 .update(note)
                 .set(note.arrayId, note.arrayId.subtract(1))
-                .where(note.project.projectId.eq(projectId).and(note.arrayId.gt(arrayId)),note.arrayId.loe(newArrayId)).execute();
+                .where(note.project.projectId.eq(projectId).and(note.arrayId.gt(arrayId)).and(note.arrayId.loe(newArrayId))).execute();
     }
 
     //    public Optional<NoteResponseDto> findByNoteId(Long noteId) {

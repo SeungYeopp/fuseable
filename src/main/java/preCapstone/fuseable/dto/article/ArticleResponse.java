@@ -17,20 +17,20 @@ public record ArticleResponse(
         return new ArticleResponse(id, title, content, createdAt, email, nickname);
     }
 
-    public static ArticleResponse from(ArticleDto dto) {
-        String nickname = dto.userDto().kakaoNickname();
-        if (nickname == null || nickname.isBlank()) {
-            nickname = dto.userDto().kakaoEmail();
-        }
-
-        return new ArticleResponse(
-                dto.id(),
-                dto.title(),
-                dto.content(),
-                dto.createdAt(),
-                dto.userDto().kakaoEmail(),
-                nickname
-        );
-    }
+//    public static ArticleResponse from(ArticleDto dto) {
+//        String nickname = dto.userDto().kakaoNickname();
+//        if (nickname == null || nickname.isBlank()) {
+//            nickname = dto.userDto().kakaoEmail();
+//        }
+//
+//        return new ArticleResponse(
+//                dto.id(),
+//                dto.title(),
+//                dto.content(),
+//                dto.createdAt(),
+//                dto.userDto().kakaoEmail(),
+//                nickname
+//        );
+//    }
 
 }

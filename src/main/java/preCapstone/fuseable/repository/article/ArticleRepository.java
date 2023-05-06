@@ -6,7 +6,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import preCapstone.fuseable.model.article.Article;
 
 @RepositoryRestResource
-public interface ArticleRepository extends JpaRepository<Article, Long>, QuerydslPredicateExecutor<Article> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryQuerydsl {
 
     void deleteByIdAndUser(Long articleId, String userId);
 }

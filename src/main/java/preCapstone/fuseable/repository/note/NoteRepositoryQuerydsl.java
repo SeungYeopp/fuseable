@@ -20,7 +20,8 @@ public interface NoteRepositoryQuerydsl {
     void deleteNoteByProjectId(Long projectId);
     List<Note> findByProjectIdAndUserId (Long projectId,  Long userId);
     void updateArrayIdByProjectId(Long projectId,Long arrayId);
-    void updateMoveArrayId(Long projectId,Long arrayId, Long newArrayId);
+    void updateMoveFrontArrayId(Long projectId,Long arrayId, Long newArrayId);
+    void updateMoveBackArrayId(Long projectId,Long arrayId, Long newArrayId);
 
 
 

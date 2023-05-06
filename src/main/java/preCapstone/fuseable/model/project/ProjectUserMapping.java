@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Entity
 public class ProjectUserMapping {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "SEQ")
     private Long seq;
 
@@ -31,10 +31,19 @@ public class ProjectUserMapping {
     @JoinColumn(nullable = false, name = "PROJECT_ID")
     private Project project;
 
+    @Column(nullable = false, name = "PROJECT_BOOKMARK")
+    private Boolean bookmark;
+
     @Builder
-    public ProjectUserMapping( User user, Project project, Role role) {
+    public ProjectUserMapping( User user, Project project, Role role, Boolean bookmark) {
         this.user = user;
         this.project = project;
         this.role = role;
+        this.bookmark = bookmark;
+    }
+
+    public void updateBookmark (Boolean bookmark)
+    {
+        this.bookmark = bookmark;
     }
 }

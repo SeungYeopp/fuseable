@@ -21,7 +21,7 @@ public class TotalUtil {
    public List<Note> getLastNote(List<Note> noteList) {
         return noteList
                 .stream()
-                .filter(note -> note.getPreviousId().toString().equals("0"))
+                .filter(note -> note.getNextId().toString().equals("0"))
                 .collect(Collectors.toList());
     }
 

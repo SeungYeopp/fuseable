@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class User {
 
     @Id                                                  //PK
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  //필드명과 컬럼명이 다를 때 사용 (user code 대 user_code)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)  //필드명과 컬럼명이 다를 때 사용 (user code 대 user_code)
     @Column(name = "USER_ID")                          //필드(열) 이름
     private Long userCode;
 

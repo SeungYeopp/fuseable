@@ -8,7 +8,7 @@ import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.NoteService;
 
 @RequiredArgsConstructor
-@RequestMapping("")
+@RequestMapping("/api/project")
 @RestController
 public class NoteController {
 
@@ -17,35 +17,58 @@ public class NoteController {
     //note kanban CRUD
 
     //노트 생성
-    @PostMapping("/{projectId}/main")
-    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId,@RequestBody NoteCreateDetailDto noteCreateDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.createNote(projectId, noteCreateDetail, userDetails.getUser());
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @PostMapping("/main/{userId}/{projectId}")
+    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId,@PathVariable("userId") Long userId,@RequestBody NoteCreateDetailDto noteCreateDetail) {
+        return noteService.createNote(projectId, noteCreateDetail, userId);
     }
 
-    //노트 생성
-    @PostMapping("/{projectId}/main/{noteId}")
-    public NoteUpdateDto updateNote(@PathVariable("projectId") Long projectId, @PathVariable("noteId") Long noteId, @RequestBody NoteUpdateDetailDto noteUpdateDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.updateNote(projectId, noteUpdateDetail, userDetails.getUser());
-    }
+//    //노트 생성
+//    @CrossOrigin(origins="*", allowedHeaders = "*")
+//    @PostMapping("/{projectId}/main/{noteId}")
+//    public NoteUpdateDto updateNote(@PathVariable("projectId") Long projectId, @PathVariable("noteId") Long noteId, @RequestBody NoteUpdateDetailDto noteUpdateDetail, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return noteService.updateNote(projectId, noteUpdateDetail, userDetails.getUser());
+//    }
 
     //노트 삭제
-    @DeleteMapping("/{projectId}/main")
-    public NoteDeleteDto deleteNote(@PathVariable("projectId") Long projectId,@RequestBody NoteDeleteDetailDto noteDelete, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.deleteNote(projectId, noteDelete, userDetails.getUser());
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @GetMapping("/main/delete/{projectId}/{arrayId}")
+    public NoteDeleteDto deleteNote(@PathVariable("projectId") Long projectId,@PathVariable("arrayId") Long arrayId) {
+        return noteService.deleteNote(projectId, arrayId);
     }
 
     //노트 업데이트, 노트 위치 변경
     //NoteMoveDto에는 전, 후의 id와 step(바뀔 곳) 필요
-    @PutMapping("/{projectId}/main")
-    public NoteMoveDto moveNote(@PathVariable("projectId") Long projectId,@RequestBody NoteMoveDetailDto noteMove, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.moveNote(projectId, noteMove, userDetails.getUser());
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @PostMapping("/main/move/{projectId}")
+    public NoteMoveDto moveNote(@PathVariable("projectId") Long projectId,@RequestBody NoteMoveDetailDto noteMove) {
+        return noteService.moveNote(projectId, noteMove);
+    }
+
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @PostMapping("/main/update/{projectId}/{arrayId}")
+    public NoteUpdateDto updateNote(@PathVariable("projectId") Long projectId,@PathVariable("arrayId") Long arrayId, @RequestBody NoteUpdateDetailDto noteUpdate) {
+        return noteService.updateNote(projectId, arrayId, noteUpdate);
     }
 
     //유저 이름으로 검색
-    @GetMapping("/{projectId}/mynotes")
-    public NoteFindMine findNote(@PathVariable("projectId") Long projectId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return noteService.findNote(projectId, userDetails.getUser());
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @GetMapping("/main/mynote/{userId}/{projectId}")
+    public NoteFindMine findNote(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {
+        return noteService.findNote(userId, projectId);
     }
+
+    //댓글
+    //projectId와 arrayId 해당 노트를 찾기위한 것
+    //userId는 writer는 글 작성자를 적기위해서
+
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @PostMapping("/main/comment/{projectId}/{arrayId}") //mapping과 pathvariable 수정 필요
+    public NoteCommentDto noteComment(@PathVariable("projectId") Long projectId, @PathVariable("arrayId") Long arrayId, @RequestBody NoteCommentDetailDto noteComment) {
+        return noteService.noteComment(projectId,arrayId,noteComment);
+    }
+
+
 
 
 

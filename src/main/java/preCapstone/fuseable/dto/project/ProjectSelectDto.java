@@ -20,7 +20,6 @@ public class ProjectSelectDto {
     // 프로젝트 명
     private String title;
 
-
     private Role role;
 
     private List<Note> note;
