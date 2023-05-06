@@ -3,6 +3,10 @@ package preCapstone.fuseable.model.schedule;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import preCapstone.fuseable.dto.note.NoteUpdateDetailDto;
+import preCapstone.fuseable.dto.schedule.ScheduleUpdateDetailDto;
+import preCapstone.fuseable.model.project.Project;
+import preCapstone.fuseable.model.user.User;
 
 import javax.persistence.*;
 
@@ -11,33 +15,32 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Schedule {
 
+    //스케쥴ID, user(Id용), checkbox, 요일, 시간
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="schedule_Id")
     private Long scheduleId;
 
-    @Column(name = "USER_ID")
-    private Long  userCode;
+    //각 유저의
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "USER_ID")
+    private User user;
 
-    @Column(name = "time_check")
-    private Boolean timeCheck;
+    //010001 이런식으로 7day * 1.5시간 * 10 (9~24시)
+    @Column(name = "checkBox")
+    private String checkBox;
 
-    @Column(name = "day")
-    private Long day;
-
-    @Column(name = "time")
-    private Long time;
 
     @Builder
-    public Schedule(Long scheduleId, Long userCode, Boolean timeCheck, Long day, Long time) {
-        this.scheduleId = scheduleId;
-        this.userCode = userCode;
-        this.timeCheck = timeCheck;
-        this.day= day;
-        this.time = time;
+    public Schedule(User user,String checkBox) {
+        this.user = user;
+        this.checkBox = checkBox;
     }
 
-    //public void updateTimeCheck()
+
+    public void updateCheckBox (ScheduleUpdateDetailDto updateDetail) {
+        this.checkBox= updateDetail.getCheckBox();
+    }
 
 
 }

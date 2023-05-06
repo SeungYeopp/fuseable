@@ -3,10 +3,9 @@ package preCapstone.fuseable.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import preCapstone.fuseable.dto.project.ProjectReadListDto;
-import preCapstone.fuseable.dto.schedule.ScheduleCreateDto;
 import preCapstone.fuseable.dto.schedule.ScheduleReadAllDto;
 import preCapstone.fuseable.dto.schedule.ScheduleReadDto;
+import preCapstone.fuseable.dto.schedule.ScheduleUpdateDetailDto;
 import preCapstone.fuseable.dto.schedule.ScheduleUpdateDto;
 import preCapstone.fuseable.service.ScheduleService;
 
@@ -18,33 +17,30 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    //필요한 사항
-    //1. 시간나누는 기준, 2. 어떤식으로 체크박스를 알려줄지 3. 보내줘야 하는것
 
-
+    //read 겸 create
+    //read 했을 시 userId로 된 시간표가 없으면 default생성 후 return
+    //userId로 된 시간표가 있으면 해당 데이터 return
     @CrossOrigin(origins="*", allowedHeaders = "*")
-    @GetMapping("/create/{userId}")
-    public ScheduleCreateDto createSchedule(@PathVariable("userId") Long userId) {
-        return scheduleService.createSchedule(userId);
-    }
-
-    //CrossOrigin(origins="*", allowedHeaders = "*")
     @GetMapping("/read/{userId}")
     public ScheduleReadDto readSchedule(@PathVariable("userId") Long userId) {
         return scheduleService.readSchedule(userId);
-
     }
 
-    //CrossOrigin(origins="*", allowedHeaders = "*")
-    @GetMapping("/update/{userId}")
-    public ScheduleUpdateDto updateSchedule(@PathVariable("userId") Long userId) {
-        return scheduleService.updateSchedule(userId);
+    //업데이트
+    //front에서 시간표 저장(업데이트) 버튼 누를 시 활성화
+    //scheduleId를 통해 schedule의 checkbox 통으로 update
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @GetMapping("/update/{scheduleId}/")
+    public ScheduleUpdateDto updateSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody ScheduleUpdateDetailDto scheduleUpdateDetail) {
+        return scheduleService.updateSchedule(scheduleId, scheduleUpdateDetail);
     }
 
-    //CrossOrigin(origins="*", allowedHeaders = "*")
-    @GetMapping("/readall/{userId}")
-    public ScheduleReadAllDto readAllSchedule(@PathVariable("userId") Long userId) {
-        return scheduleService.readAllSchedule(userId);
+    //프로젝트 전부 읽기
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @GetMapping("/readall/{projectId}")
+    public ScheduleReadAllDto readAllSchedule(@PathVariable("projectId") Long projectId) {
+        return scheduleService.readAllSchedule(projectId);
 
     }
 

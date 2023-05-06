@@ -2,17 +2,16 @@ package preCapstone.fuseable.dto.schedule;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class ScheduleReadDto {
-
-    private Long scheduleId;
+@NoArgsConstructor
+public class ScheduleUpdateDetailDto {
 
     private String checkBox;
 
     @Builder
-    public ScheduleReadDto(Long scheduleId, String checkBox) {
-        this.scheduleId = scheduleId;
+    public ScheduleUpdateDetailDto(String checkBox) {
         this.checkBox = checkBox;
     }
 }
