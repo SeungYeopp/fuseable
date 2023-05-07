@@ -45,6 +45,6 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryQuerydsl {
                 .select(schedule.checkBox)
                 .from(schedule)
                 .where(schedule.user.userCode.eq(userId))
-                .fetchOne();
+                .fetchFirst();
     }
 }
