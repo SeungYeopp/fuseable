@@ -1,4 +1,4 @@
-package preCapstone.fuseable.model.oauth;
+package preCapstone.fuseable.model.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

@@ -10,8 +10,9 @@ spring:
           client:
             registration:
               google:
-                client-id: google-client-id
-                client-secret: google-secret
+                clientId: 192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com
+                redirect: http://localhost:8080/login/oauth2/code/google
+                secret: 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
             provider:
               kakao:
                 authorization_uri: https://kauth.kakao.com/oauth/authorize
@@ -52,4 +53,7 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 # org.hibernate.type: trace
+
+
+
 

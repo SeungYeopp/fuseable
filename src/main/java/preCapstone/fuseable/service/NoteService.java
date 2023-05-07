@@ -47,7 +47,6 @@ public class NoteService {
     private final FileRepository fileRepository;
     private final CommentRepository commentRepository;
 
-    private final CommentRepository noteCommentRepository;
     private final EntityManager em;
 
     //    private final ProjectUserMapping projectUserMapping;

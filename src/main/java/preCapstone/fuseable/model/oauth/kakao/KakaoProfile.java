@@ -1,4 +1,4 @@
-package preCapstone.fuseable.model.oauth;
+package preCapstone.fuseable.model.oauth.kakao;
 
 import lombok.Data;
 

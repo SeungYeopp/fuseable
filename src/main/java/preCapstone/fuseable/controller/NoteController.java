@@ -1,10 +1,8 @@
 package preCapstone.fuseable.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import preCapstone.fuseable.dto.note.*;
-import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.NoteService;
 
 @RequiredArgsConstructor

@@ -14,8 +14,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import preCapstone.fuseable.config.jwt.JwtProperties;
-import preCapstone.fuseable.model.oauth.KakaoProfile;
-import preCapstone.fuseable.model.oauth.OauthToken;
+import preCapstone.fuseable.model.oauth.kakao.KakaoProfile;
+import preCapstone.fuseable.model.oauth.kakao.OauthToken;
 import preCapstone.fuseable.model.user.User;
 import preCapstone.fuseable.repository.user.UserRepository;
 

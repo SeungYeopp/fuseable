@@ -1,12 +1,9 @@
 package preCapstone.fuseable.controller;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import preCapstone.fuseable.dto.project.*;
-import preCapstone.fuseable.model.oauth.UserDetailsImpl;
 import preCapstone.fuseable.service.ProjectService;
 
 @RestController

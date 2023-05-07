@@ -1,4 +1,4 @@
-package preCapstone.fuseable.model.oauth;
+package preCapstone.fuseable.model.oauth.kakao;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

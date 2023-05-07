@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import preCapstone.fuseable.config.jwt.JwtProperties;
 import org.springframework.http.*;
+import preCapstone.fuseable.model.oauth.google.GoogleOAuth;
 import preCapstone.fuseable.model.user.User;
-import preCapstone.fuseable.model.oauth.OauthToken;
+import preCapstone.fuseable.model.oauth.kakao.OauthToken;
 import preCapstone.fuseable.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController       //jackson 관련 라이브러리 사용시 사용
 @RequestMapping("/api")   // localhost:8080/api 형태로 매핑 됨
@@ -46,6 +49,19 @@ public class UserController {
         //ResponseEntity를 이용해 body 값에 인증된 사용자 정보를 넘겨준다.
         return ResponseEntity.ok().body(user);
     }
+
+    @GetMapping("google")
+    public void getGoogleAuthUrl(HttpServletResponse response) throws Exception {
+        response.sendRedirect(GoogleOAuth.g);
+    }
+
+    @GetMapping("/google/login")
+    public SingleResult<TokenUserDto> callback(
+            @RequestParam(name = "code") String code) throws IOException {
+        return oAuthService.googlelogin(code);
+    }
+
+
 
 
 }
