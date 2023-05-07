@@ -9,7 +9,7 @@ public interface ScheduleRepositoryQuerydsl {
 
     Optional<Schedule> findByUserId(Long userId);
 
-    Optional<Schedule> updateCheckBoxById(Long scheduleId, ScheduleUpdateDetailDto scheduleDetail);
+    void updateCheckBoxById(Long scheduleId, ScheduleUpdateDetailDto scheduleDetail);
 
     String findCheckBoxByUserId(Long userId);
 

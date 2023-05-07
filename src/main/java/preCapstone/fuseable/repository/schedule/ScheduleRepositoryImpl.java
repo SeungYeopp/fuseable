@@ -2,6 +2,7 @@ package preCapstone.fuseable.repository.schedule;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import preCapstone.fuseable.dto.schedule.ScheduleUpdateDetailDto;
+import preCapstone.fuseable.model.schedule.QSchedule;
 import preCapstone.fuseable.model.schedule.Schedule;
 
 import javax.persistence.EntityManager;
@@ -18,28 +19,32 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryQuerydsl {
        this.queryFactory=new JPAQueryFactory(em);
    }
 
-   //QSchedule schedule = new QSchedule()  <- 이 부분 어떻게
+   QSchedule schedule = new QSchedule("s");
 
     @Override
     public Optional<Schedule> findByUserId(Long userId) {
         return Optional.ofNullable(queryFactory
                 .select(schedule)
                 .from(schedule)
-                .where(schedule.user.userCode.eq(userId),)
+                .where(schedule.user.userCode.eq(userId))
                 .fetchFirst());
     }
 
     @Override
-    public Optional<Schedule> updateCheckBoxById(Long scheduleId, ScheduleUpdateDetailDto scheduleUpdateDetail) {
+    public void updateCheckBoxById(Long scheduleId, ScheduleUpdateDetailDto scheduleUpdateDetail) {
         queryFactory
                 .update(schedule)
-                .set(schedule.checkBox, scheduleUpdateDetail)
+                .set(schedule.checkBox, scheduleUpdateDetail.getCheckBox())
                 .where(schedule.scheduleId.eq(scheduleId))
                 .execute();
     }
 
-    @Override //이거 하나만...
+    @Override
     public String findCheckBoxByUserId(Long userId) {
-        return
+        return queryFactory
+                .select(schedule.checkBox)
+                .from(schedule)
+                .where(schedule.user.userCode.eq(userId))
+                .fetchOne();
     }
 }

@@ -324,23 +324,23 @@ public class NoteService {
     }
 
 
-    @Transactional
-    public CommentCreateDto noteComment(Long projectId, Long arrayId, CommentCreateDetailDto noteDetail) {
-
-
-        Note note = noteRepository.findByArrayIdAndProjectId(arrayId, projectId);
-
-        NoteComment noteComment = noteCommentRepository.findByNoteId(note.getNoteId());
-
-
-
-        return CommentCreateDto.builder()
-                .arrayId(arrayId)
-                .comment(noteComment.getComment())
-                .writerId(noteComment.getWriterId())
-                .build();
-
-    }
+//    @Transactional
+//    public CommentCreateDto noteComment(Long projectId, Long arrayId, CommentCreateDetailDto noteDetail) {
+//
+//
+//        Note note = noteRepository.findByArrayIdAndProjectId(arrayId, projectId);
+//
+//        NoteComment noteComment = noteCommentRepository.findByNoteId(note.getNoteId());
+//
+//
+//
+//        return CommentCreateDto.builder()
+//                .arrayId(arrayId)
+//                .comment(noteComment.getComment())
+//                .writerId(noteComment.getWriterId())
+//                .build();
+//
+//    }
 
 
 
