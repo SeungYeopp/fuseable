@@ -61,6 +61,7 @@ public class ProjectReadDto {
                 .recentNoteUpdateDate(projectTotal.getRecentNoteUpdateDate())
                 // master = 1 이면 삭제 권한있음
                 .admin(projectUserMapping.getRole()==Role.ROLE_ADMIN)
+                .bookmark(projectUserMapping.getBookmark())
                 .build();
     }
 }
