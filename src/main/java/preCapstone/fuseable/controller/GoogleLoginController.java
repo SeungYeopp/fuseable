@@ -2,10 +2,11 @@ package preCapstone.fuseable.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import preCapstone.fuseable.model.oauth.kakao.OauthToken;
 import preCapstone.fuseable.service.GoogleLoginService;
 
 @RestController
-@RequestMapping(value = "/login/oauth2", produces = "application/json")
+@RequestMapping(value = "/login/oauth2")
 public class GoogleLoginController {
 
     GoogleLoginService googleLoginService;
@@ -14,8 +15,8 @@ public class GoogleLoginController {
         this.googleLoginService = googleLoginService;
     }
 
-    @GetMapping("/code/{registrationId}")
-    public void googleLogin(@RequestParam String code, @PathVariable String registrationId) {
-        googleLoginService.socialLogin(code, registrationId);
+    @GetMapping("/code")
+    public void googleLogin(@RequestParam String code) {
+        googleLoginService.socialLogin(code);
     }
 }

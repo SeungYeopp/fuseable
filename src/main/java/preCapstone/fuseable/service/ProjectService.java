@@ -242,4 +242,33 @@ public class ProjectService {
                 .build();
     }
 
+
+    //    private String getAccessToken(String authorizationCode, String registrationId) {
+//////        String clientId = env.getProperty("oauth2." + registrationId + ".192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
+//////        String clientSecret = env.getProperty("oauth2." + registrationId + ".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");
+//////        String redirectUri = env.getProperty("oauth2." + registrationId + ".http://localhost:8080/login/oauth2/code/google");
+//////        String tokenUri = env.getProperty("oauth2." + registrationId + ".https://oauth2.googleapis.com/token");
+////
+////        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+////        params.add("code", authorizationCode);
+////        params.add("client_id", "192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
+////        params.add("client_secret", "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");
+////        params.add("redirect_uri", "http://localhost:8080/login/oauth2/code/google");
+////        params.add("grant_type", "authorization_code");
+//
+//
+//
+////        HttpHeaders headers = new HttpHeaders();
+////        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+////
+////        HttpEntity entity = new HttpEntity(params, headers);
+////
+////        ResponseEntity<JsonNode> responseNode = restTemplate.exchange("https://oauth2.googleapis.com/token", HttpMethod.POST, entity, JsonNode.class);
+////        JsonNode accessTokenNode = responseNode.getBody();
+////        return accessTokenNode.get("access_token").asText();
+//    }
+
+
+
+
 }
