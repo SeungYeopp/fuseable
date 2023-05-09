@@ -18,5 +18,6 @@ public class GoogleLoginController {
     @GetMapping("/code")
     public void googleLogin(@RequestParam String code) {
         googleLoginService.socialLogin(code);
+
     }
 }

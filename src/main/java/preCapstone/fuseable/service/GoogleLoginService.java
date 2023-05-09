@@ -23,8 +23,9 @@ public class GoogleLoginService {
     public GoogleLoginService(Environment env) {
         this.env = env;
     }
+
     public void socialLogin(String code) {
-        OauthToken accessToken = getAccessToken(code);
+        String accessToken = getAccessToken(code);
         JsonNode userResourceNode = getUserResource(accessToken, "google");
         System.out.println("userResourceNode = " + userResourceNode);
 
@@ -34,85 +35,96 @@ public class GoogleLoginService {
         System.out.println("id = " + id);
         System.out.println("email = " + email);
         System.out.println("nickname = " + nickname);
+
     }
 
-    public OauthToken getAccessToken(String code) {
 
-        //http 통신 관련 범용 라이브러리, 애플리케이션 내부 REST API 요청
-        RestTemplate rt = new RestTemplate();
+    private String getAccessToken(String authorizationCode) {
+//        String clientId = env.getProperty("oauth2." + registrationId + ".192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
+//        String clientSecret = env.getProperty("oauth2." + registrationId + ".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");
+//        String redirectUri = env.getProperty("oauth2." + registrationId + ".http://localhost:8080/login/oauth2/code/google");
+//        String tokenUri = env.getProperty("oauth2." + registrationId + ".https://oauth2.googleapis.com/token");
 
-        //http 헤더 오브젝트 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        //http 바디 오브젝트 생성, kakao developer에 있는 값
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
+        params.add("code", authorizationCode);
         params.add("client_id", "192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
         params.add("client_secret", "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");
         params.add("redirect_uri", "http://localhost:8080/login/oauth2/code");
-        params.add("code", code);
+        params.add("grant_type", "authorization_code");
 
-        //HttpEntity 생성, header + body를 하나에 담음
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
-                new HttpEntity<>(params, headers);
 
-        //Json 형태이기 때문에 string으로 받음, .exchagne(요청 url, httpmethod.형식, Entity, 타입)으로 api 호출
-        ResponseEntity<String> accessTokenResponse = rt.exchange(
-                "https://oauth2.googleapis.com/token",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class
-        );
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        //json object간의 변환
-        ObjectMapper objectMapper = new ObjectMapper();
-        OauthToken oauthToken = null;
-        try {
-            //json -> OauthToken이라는 object로 변환
-            oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthToken.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        HttpEntity entity = new HttpEntity(params, headers);
 
-        return oauthToken; //문제 없으면 리턴
+        ResponseEntity<JsonNode> responseNode = restTemplate.exchange("https://oauth2.googleapis.com/token", HttpMethod.POST, entity, JsonNode.class);
+        JsonNode accessTokenNode = responseNode.getBody();
+        return accessTokenNode.get("access_token").asText();
     }
 
-    private JsonNode getUserResource(OauthToken accessToken, String registrationId) {
-        String resourceUri = env.getProperty("oauth2."+registrationId+".resource-uri");
+    private JsonNode getUserResource(String accessToken, String registrationId) {
+        String resourceUri = env.getProperty("oauth2." + registrationId + ".resource-uri");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity entity = new HttpEntity(headers);
         return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
+
     }
 }
 
 
-//    private String getAccessToken(String authorizationCode, String registrationId) {
-//        String clientId = env.getProperty("oauth2." + registrationId + ".192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
-//        String clientSecret = env.getProperty("oauth2." + registrationId + ".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");
-//        String redirectUri = env.getProperty("oauth2." + registrationId + ".http://localhost:8080/login/oauth2/code/google");
-//        String tokenUri = env.getProperty("oauth2." + registrationId + ".https://oauth2.googleapis.com/token");
+
+
+
+
+
+//    public OauthToken getAccessToken(String code) {
 //
+//        //http 통신 관련 범용 라이브러리, 애플리케이션 내부 REST API 요청
+//        RestTemplate rt = new RestTemplate();
+//
+//        //http 헤더 오브젝트 생성
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+//
+//        //http 바디 오브젝트 생성, kakao developer에 있는 값
 //        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        params.add("code", authorizationCode);
+//        params.add("grant_type", "authorization_code");
 //        params.add("client_id", "192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
 //        params.add("client_secret", "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");
-//        params.add("redirect_uri", "http://localhost:8080/login/oauth2/code/google");
-//        params.add("grant_type", "authorization_code");
+//        params.add("redirect_uri", "http://localhost:8080/login/oauth2/code");
+//        params.add("code", code);
 //
+//        //HttpEntity 생성, header + body를 하나에 담음
+//        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+//                new HttpEntity<>(params, headers);
 //
+//        //Json 형태이기 때문에 string으로 받음, .exchagne(요청 url, httpmethod.형식, Entity, 타입)으로 api 호출
+//        ResponseEntity<String> accessTokenResponse = rt.exchange(
+//                "https://oauth2.googleapis.com/token",
+//                HttpMethod.POST,
+//                kakaoTokenRequest,
+//                String.class
+//        );
 //
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//        //json object간의 변환
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        OauthToken oauthToken = null;
+//        try {
+//            //json -> OauthToken이라는 object로 변환
+//            oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthToken.class);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
 //
-//        HttpEntity entity = new HttpEntity(params, headers);
-//
-//        ResponseEntity<JsonNode> responseNode = restTemplate.exchange("https://oauth2.googleapis.com/token", HttpMethod.POST, entity, JsonNode.class);
-//        JsonNode accessTokenNode = responseNode.getBody();
-//        return accessTokenNode.get("access_token").asText();
+//        return oauthToken; //문제 없으면 리턴
 //    }
+//
+//
+//    }
+
 
 
 
