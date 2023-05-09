@@ -26,7 +26,8 @@ public class GoogleLoginService {
 
     public void socialLogin(String code) {
         String accessToken = getAccessToken(code);
-        JsonNode userResourceNode = getUserResource(accessToken, "google");
+        System.out.println("accessToken = " + accessToken);
+        JsonNode userResourceNode = getUserResource(accessToken);
         System.out.println("userResourceNode = " + userResourceNode);
 
         String id = userResourceNode.get("id").asText();
@@ -40,10 +41,10 @@ public class GoogleLoginService {
 
 
     private String getAccessToken(String authorizationCode) {
-//        String clientId = env.getProperty("oauth2." + registrationId + ".192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
-//        String clientSecret = env.getProperty("oauth2." + registrationId + ".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");
-//        String redirectUri = env.getProperty("oauth2." + registrationId + ".http://localhost:8080/login/oauth2/code/google");
-//        String tokenUri = env.getProperty("oauth2." + registrationId + ".https://oauth2.googleapis.com/token");
+//        String clientId = env.getProperty("oauth2." + "google" + ".192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
+//        String clientId = env.getProperty("192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
+//        String clientSecret = env.getProperty("oauth2." + "google" + ".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");//String redirectUri = env.getProperty("oauth2." + "redirect-uri");
+//        String tokenUri = env.getProperty("oauth2.https://oauth2.googleapis.com/token");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", authorizationCode);
@@ -63,13 +64,13 @@ public class GoogleLoginService {
         return accessTokenNode.get("access_token").asText();
     }
 
-    private JsonNode getUserResource(String accessToken, String registrationId) {
-        String resourceUri = env.getProperty("oauth2." + registrationId + ".resource-uri");
+    private JsonNode getUserResource(String accessToken) {
+//        String resourceUri = env.getProperty("oauth2." + registrationId + ".resource-uri");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity entity = new HttpEntity(headers);
-        return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
+        return restTemplate.exchange("https://www.googleapis.com/oauth2/v2/userinfo", HttpMethod.GET, entity, JsonNode.class).getBody();
 
     }
 }

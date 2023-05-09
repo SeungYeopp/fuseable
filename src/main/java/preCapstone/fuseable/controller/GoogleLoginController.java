@@ -6,6 +6,7 @@ import preCapstone.fuseable.model.oauth.kakao.OauthToken;
 import preCapstone.fuseable.service.GoogleLoginService;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/login/oauth2")
 public class GoogleLoginController {
 
