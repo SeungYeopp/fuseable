@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import preCapstone.fuseable.dto.article.*;
+import preCapstone.fuseable.dto.project.ProjectBookmarkDto;
 import preCapstone.fuseable.model.article.Article;
 import preCapstone.fuseable.model.article.FormStatus;
 import preCapstone.fuseable.service.ArticleService;
@@ -33,7 +34,7 @@ public class ArticleController {
 
     // 공지사항 생성 페이지
     @PostMapping("/{userId}/{projectId}")
-    public Article createArticle(@RequestBody ArticleRequest articleRequest, @PathVariable ("userId") Long userId, @PathVariable("projectId") Long projectId) {
+    public ArticleCreateDto createArticle(@RequestBody ArticleRequest articleRequest, @PathVariable ("userId") Long userId, @PathVariable("projectId") Long projectId) {
         return articleService.createArticle(articleRequest.toDto(userId, projectId));
     }
 
@@ -52,6 +53,20 @@ public class ArticleController {
     public ResponseEntity<Map<String, Boolean>> deleteArticle(@PathVariable Long article_id) {
         return articleService.deleteArticle(article_id);
     }
+
+    @GetMapping("/list/bookmark/{projectId}")
+    public List<Article> bookmarkArticle(@PathVariable Long projectId) {
+        return articleService.bookmarkArticles(projectId);
+    }
+
+//    @CrossOrigin(origins="*", allowedHeaders = "*")
+//    @GetMapping("/bookmark/{userId}/{projectId}")
+//    public ProjectBookmarkDto bookmarkArticle(@PathVariable("projectId") Long projectId, @PathVariable ("userId") Long userId){
+//        return projectService.bookmarkProject(projectId,userId);
+//    }
+
+
+
 
 
 //    private final PaginationService paginationService;

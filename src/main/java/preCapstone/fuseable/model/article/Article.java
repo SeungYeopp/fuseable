@@ -42,18 +42,22 @@ public class Article {
     @Column(name = "CREATE_DATE")
     private LocalDate startAt;
 
+    @Setter @Column(nullable = false)
+    private Boolean bookmark;
+
     protected Article() {}
 
-    private Article(User user, Project project, String title, String content, LocalDate startAt) {
+    private Article(User user, Project project, String title, String content, LocalDate startAt, Boolean bookmark) {
         this.user = user;
         this.project = project;
         this.title = title;
         this.content = content;
         this.startAt = startAt;
+        this.bookmark = bookmark;
     }
 
-    public static Article of(User user, Project project, String title, String content, LocalDate startAt) {
-        return new Article(user, project, title, content, startAt);
+    public static Article of(User user, Project project, String title, String content, LocalDate startAt, Boolean bookmark) {
+        return new Article(user, project, title, content, startAt, bookmark);
     }
 
     @Override

@@ -42,5 +42,15 @@ public class FileRepositoryImpl implements FileRepositoryQuerydsl{
                 .execute();
     }
 
+    @Override
+    public File findByFileId(Long fileId) {
+
+        return queryFactory
+                .select(file)
+                .from(file)
+                .where(file.fileId.eq(fileId))
+                .fetchOne();
+    }
+
 
 }

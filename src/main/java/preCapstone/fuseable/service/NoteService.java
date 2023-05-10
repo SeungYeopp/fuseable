@@ -115,7 +115,7 @@ public class NoteService {
                 }
 
                 //파일 하나 만들어서
-                file.builder().fileName(originalFilename).fileUrl("경로/" + saveFileName).fileRandomName(saveFileName).build();
+                file.builder().fileName(originalFilename).fileUrl("C:/Users/" + saveFileName).fileRandomName(saveFileName).build();
 
                 //리스트에 저장
                 files.add(file);
@@ -178,7 +178,7 @@ public class NoteService {
                 }
 
                 //파일 하나 만들어서
-                file.builder().fileName(originalFilename).fileUrl("경로/" + saveFileName).fileRandomName(saveFileName).build();
+                file.builder().fileName(originalFilename).fileUrl("C:/Users/" + saveFileName).fileRandomName(saveFileName).build();
 
                 //리스트에 저장
                 files.add(file);
@@ -389,16 +389,9 @@ public class NoteService {
     public FileDownloadDto fileDownload(Long fileId) {
 
         //질의문 하나만
-//        File file = fileRepository.findById(fileId);
+       File file = fileRepository.findByFileId(fileId);
 
 
-        //더미데이터
-        File file = new File();
-        file.builder()
-                .fileName("1")
-                .fileRandomName("1")
-                .fileUrl("2")
-                .build();
 
         return FileDownloadDto.builder()
                 .fileName(file.getFileName())
@@ -425,7 +418,7 @@ public class NoteService {
     private Path getFullPath(String filename) {
 
         //파일이 실제로 저장될 위치
-        Path uploadPath = Paths.get("C:/내문서/" + filename);
+        Path uploadPath = Paths.get("C:/Users/" + filename);
         return uploadPath;
     }
 

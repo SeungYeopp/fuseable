@@ -11,7 +11,9 @@ import preCapstone.fuseable.model.project.QProject;
 import preCapstone.fuseable.model.user.QUser;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.time.chrono.JapaneseChronology;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,6 +96,14 @@ public class NoteRepositoryImpl implements NoteRepositoryQuerydsl {
                 .update(note)
                 .set(note.arrayId, note.arrayId.subtract(1))
                 .where(note.project.projectId.eq(projectId).and(note.arrayId.gt(arrayId)).and(note.arrayId.loe(newArrayId))).execute();
+    }
+
+    public List<Note> alarmNote() {
+        LocalDate threeDaysAgo = LocalDate.now().minus(3, ChronoUnit.DAYS);
+
+        return queryFactory.selectFrom(note)
+                .where(note.endAt.after(threeDaysAgo))
+                .fetch();
     }
 
     //    public Optional<NoteResponseDto> findByNoteId(Long noteId) {

@@ -5,6 +5,7 @@ import preCapstone.fuseable.model.article.Article;
 import preCapstone.fuseable.model.article.QArticle;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 
 public class ArticleRepositoryImpl implements ArticleRepositoryQuerydsl {
@@ -16,6 +17,14 @@ public class ArticleRepositoryImpl implements ArticleRepositoryQuerydsl {
 
     @Override
     public List<Article> findAllByProjectId(Long projectId) {
+        return queryFactory
+                .selectFrom(article)
+                .where(article.project.projectId.eq(projectId))
+                .fetch();
+    }
+
+    @Override
+    public List<Article> findBookmarkByProjectIdAndDate(Long projectId, LocalDate Date) {
         return queryFactory
                 .selectFrom(article)
                 .where(article.project.projectId.eq(projectId))

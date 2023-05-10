@@ -81,7 +81,7 @@ public class GoogleLoginService {
     public String saveUserAndGetToken(String token) {
 
         JsonNode userResourceNode = getUserResource(token);
-//        GoogleProfile profile = findProfile(token);
+
 
         User user = userRepository.findByAccountEmail(userResourceNode.get("email").asText());
         if (user == null) {

@@ -22,6 +22,7 @@ public interface NoteRepositoryQuerydsl {
     void updateArrayIdByProjectId(Long projectId,Long arrayId);
     void updateMoveFrontArrayId(Long projectId,Long arrayId, Long newArrayId);
     void updateMoveBackArrayId(Long projectId,Long arrayId, Long newArrayId);
+    List<Note> alarmNote();
 
 
 

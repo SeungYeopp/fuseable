@@ -20,15 +20,17 @@ public record ArticleDto(
         String createdBy,
         LocalDateTime modifiedAt,
         String modifiedBy,
-        LocalDate startAt
+        LocalDate startAt,
+
+        Boolean bookmark
 ){
 
     public static ArticleDto of(Long userId, Long projectId, String title, String content, LocalDate startAt) {
-        return new ArticleDto(null, userId, projectId, title, content, null, null, null, null, startAt);
+        return new ArticleDto(null, userId, projectId, title, content, null, null, null, null, startAt,false);
     }
 
     public static ArticleDto of(Long id, Long userId, Long projectId, String title, String content, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy, LocalDate startAt) {
-        return new ArticleDto(id, userId, projectId, title, content, createdAt, createdBy, modifiedAt, modifiedBy, startAt);
+        return new ArticleDto(id, userId, projectId, title, content, createdAt, createdBy, modifiedAt, modifiedBy, startAt,false);
     }
 
 //    public static ArticleDto from(Article article) {
@@ -50,7 +52,8 @@ public record ArticleDto(
                 project,
                 title,
                 content,
-                startAt
+                startAt,
+                false
         );
     }
 }

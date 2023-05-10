@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import preCapstone.fuseable.dto.article.ArticleCreateDto;
 import preCapstone.fuseable.dto.article.ArticleDto;
 import preCapstone.fuseable.exception.ResourceNotFoundException;
 import preCapstone.fuseable.model.article.Article;
@@ -17,6 +18,7 @@ import preCapstone.fuseable.repository.project.ProjectRepository;
 import preCapstone.fuseable.repository.user.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,18 +38,21 @@ public class ArticleService {
         return articleRepository.findAll();
     }
 
-    public Article createArticle(ArticleDto dto) {
+    public ArticleCreateDto createArticle(ArticleDto dto) {
 
         User user = userRepository.getReferenceById(dto.userId());
         Project project = projectRepository.getReferenceById(dto.projectId());
 
         Article article = dto.toEntity(user, project);
-        return articleRepository.save(article);
+        articleRepository.save(article);
+        return ArticleCreateDto.fromEntity(article);
     }
 
     public ResponseEntity<Article> getArticle(Long article_id) {
         Article article = articleRepository.findById(article_id)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 공지사항이 존재하지 않습니다."));
+
+
 
         return ResponseEntity.ok(article);
     }
@@ -75,6 +80,13 @@ public class ArticleService {
 
     public List<Article> findArticleByProjectId(Long projectId){
         return articleRepository.findAllByProjectId(projectId);
+    }
+
+    public List<Article> bookmarkArticles(Long projectId) {
+
+        LocalDate currentDate = LocalDate.now();
+
+        return articleRepository.findBookmarkByProjectIdAndDate(projectId,currentDate);
     }
 
 //
