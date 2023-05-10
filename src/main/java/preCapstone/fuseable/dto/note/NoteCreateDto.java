@@ -2,8 +2,7 @@ package preCapstone.fuseable.dto.note;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import preCapstone.fuseable.dto.file.FileDetailDto;
+import preCapstone.fuseable.dto.file.FileUploadDetailDto;
 import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.note.Step;
 
@@ -22,7 +21,7 @@ public class NoteCreateDto {
     private String step;
 
 
-    private List<FileDetailDto> files;
+    private List<FileUploadDetailDto> files;
 
     //endAt과 step은 각각 localdate, step 이었기때문에 string으로 바꿔서 넣어줌
     @Builder
@@ -34,7 +33,7 @@ public class NoteCreateDto {
         this.step = step.toString();
     }
 
-    public void uploadFile(List<FileDetailDto> files) {
+    public void uploadFile(List<FileUploadDetailDto> files) {
         this.files = files;
     }
 

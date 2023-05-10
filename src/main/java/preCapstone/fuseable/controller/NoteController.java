@@ -2,8 +2,12 @@ package preCapstone.fuseable.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import preCapstone.fuseable.dto.file.FileDownloadDto;
 import preCapstone.fuseable.dto.note.*;
 import preCapstone.fuseable.service.NoteService;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/project")
@@ -17,8 +21,8 @@ public class NoteController {
     //노트 생성
     @CrossOrigin(origins="*", allowedHeaders = "*")
     @PostMapping("/main/{userId}/{projectId}")
-    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId,@PathVariable("userId") Long userId,@RequestBody NoteCreateDetailDto noteCreateDetail) {
-        return noteService.createNote(projectId, noteCreateDetail, userId);
+    public NoteCreateDto createNote(@PathVariable("projectId") Long projectId, @PathVariable("userId") Long userId, @RequestBody NoteCreateDetailDto noteCreateDetail, @RequestPart List<MultipartFile> multipartFileList ) {
+        return noteService.createNote(projectId, noteCreateDetail, userId, multipartFileList);
     }
 
 //    //노트 생성
@@ -55,6 +59,13 @@ public class NoteController {
     public NoteFindMine findNote(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {
         return noteService.findNote(userId, projectId);
     }
+
+    @CrossOrigin
+    @GetMapping("/main/note/{fileId}")
+    public FileDownloadDto fileDownload(@PathVariable("fileId") Long fileId) {
+        return noteService.fileDownload(fileId);
+    }
+
 
 
 

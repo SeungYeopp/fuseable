@@ -3,7 +3,7 @@ package preCapstone.fuseable.dto.note;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import preCapstone.fuseable.dto.file.FileDetailDto;
+import preCapstone.fuseable.dto.file.FileUploadDetailDto;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ public class NoteUpdateDetailDto {
     private String content;
     private String endAt;
 
-    private List<FileDetailDto> files;
+    private List<FileUploadDetailDto> files;
 
     @Builder
-    public NoteUpdateDetailDto(String title, String content, String endAt, List<FileDetailDto> files) {
+    public NoteUpdateDetailDto(String title, String content, String endAt, List<FileUploadDetailDto> files) {
         this.title = title;
         this.content = content;
         this.endAt = endAt;

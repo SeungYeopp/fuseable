@@ -10,7 +10,7 @@ public interface UserRepository extends JpaRepository<User, Long> {   //DB를 �
     // JPA findBy 규칙
     // select * from user_master where kakao_email = ?
 
-    public User findByKakaoEmail(String kakaoEmail);   //findby 규칙에 의해 model-user의 kakaoEmail 기준으로 찾음
+    public User findByAccountEmail(String accountEmail);   //findby 규칙에 의해 model-user의 kakaoEmail 기준으로 찾음
 
     public User findByUserCode(Long userCode);         //findby 규칙에 의해 model-user Usercode 기준으로 찾음
 }

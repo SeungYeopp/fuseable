@@ -22,6 +22,9 @@ public class File {
     @Column(name = "FILE_NAME")
     private String fileName;
 
+    @Column(name = "File_Random_Name")
+    private String fileRandomName;
+
     @Column(name = "FILE_URL")
     private String fileUrl;
 
@@ -34,9 +37,10 @@ public class File {
     private Note note;
 
     @Builder
-    public File(String fileName, String fileUrl, User user, Note note) {
+    public File(String fileName, String fileRandomName, String fileUrl, User user, Note note) {
         this.fileName = fileName;
         this.fileUrl = fileUrl;
+        this.fileRandomName = fileRandomName;
         this.user = user;
         this.note = note;
     }

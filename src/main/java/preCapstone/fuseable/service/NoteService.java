@@ -5,16 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import preCapstone.fuseable.config.TotalUtil;
-import preCapstone.fuseable.dto.unused.CommentCreateDetailDto;
-import preCapstone.fuseable.dto.comment.CommentCreateDto;
-import preCapstone.fuseable.dto.file.FileDetailDto;
+import preCapstone.fuseable.dto.file.FileDownloadDto;
+import preCapstone.fuseable.dto.file.FileUploadDetailDto;
 import preCapstone.fuseable.dto.note.*;
 import preCapstone.fuseable.dto.project.ProjectCrewDto;
 import preCapstone.fuseable.exception.ApiRequestException;
 import preCapstone.fuseable.model.file.File;
 import preCapstone.fuseable.model.note.Note;
-import preCapstone.fuseable.model.note.NoteComment;
 import preCapstone.fuseable.model.note.Step;
 import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
@@ -27,11 +26,11 @@ import preCapstone.fuseable.repository.project.ProjectUserMappingRepository;
 import preCapstone.fuseable.repository.user.UserRepository;
 
 import javax.persistence.EntityManager;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +52,7 @@ public class NoteService {
 
 
     @Transactional
-    public NoteCreateDto createNote(Long projectId, NoteCreateDetailDto noteCreateDetail, Long userId) {
+    public NoteCreateDto createNote(Long projectId, NoteCreateDetailDto noteCreateDetail, Long userId, List<MultipartFile> fileList) {
 
         //생성 프로세스
         //해당 프로젝트의
@@ -64,9 +63,8 @@ public class NoteService {
         Step step = Step.valueOf(noteCreateDetail.getStep());
         LocalDate endAt = totalUtil.changeType(noteCreateDetail.getEndAt());
 
-        //file의 url, name
-        List<FileDetailDto> files = new ArrayList<>(noteCreateDetail.getFiles());
 
+        List<FileUploadDetailDto> files = new ArrayList<>();
 
         Note lastNote = totalUtil.getLastNote(noteList)
                 .stream()
@@ -90,9 +88,42 @@ public class NoteService {
             //return을 위한 준비
             NoteCreateDto note = NoteCreateDto.fromEntity(noteSave);
 
+
+            //file 관련 코드
+            int len = fileList.size();
+            for(int i = 0;i<len;i++) {
+
+                FileUploadDetailDto file = new FileUploadDetailDto();
+
+                //리스트 하나씩 빼내기
+                MultipartFile multipartFile = fileList.get(i);
+
+                //확장자명
+                String contentType = multipartFile.getContentType();
+
+                //원래 파일이름
+                String originalFilename = multipartFile.getOriginalFilename();
+
+                //랜덤 파일이름 (파일이름 중복 방지용)
+                String saveFileName = createSaveFileName(originalFilename);
+
+                //데이터 저장
+                try {
+                    multipartFile.transferTo((getFullPath(saveFileName)));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                //파일 하나 만들어서
+                file.builder().fileName(originalFilename).fileUrl("경로/" + saveFileName).fileRandomName(saveFileName).build();
+
+                //리스트에 저장
+                files.add(file);
+            }
+
 //            //file관련 부분, 파일이름/파일id/유저/저장되는 노트
             files.stream()
-                    .map(file -> new File(file.getFileName(), file.getFileUrl(), currentUser, noteSave))
+                    .map(file -> new File(file.getFileName(),file.getFileRandomName(), file.getFileUrl(), currentUser, noteSave))
                     .forEach(fileRepository::save);
 
 //            //file size가 5mb 보다 크다면 Limit 부여
@@ -121,10 +152,43 @@ public class NoteService {
             //return을 위한 준비
             NoteCreateDto note = NoteCreateDto.fromEntity(noteSave);
 
-            //file관련 부분, 파일이름/파일id/유저/저장되는 노트
+            //file 관련 코드
+            int len = fileList.size();
+            for(int i = 0;i<len;i++) {
+
+                FileUploadDetailDto file = new FileUploadDetailDto();
+
+                //리스트 하나씩 빼내기
+                MultipartFile multipartFile = fileList.get(i);
+
+                //확장자명
+                String contentType = multipartFile.getContentType();
+
+                //원래 파일이름
+                String originalFilename = multipartFile.getOriginalFilename();
+
+                //랜덤 파일이름 (파일이름 중복 방지용)
+                String saveFileName = createSaveFileName(originalFilename);
+
+                //데이터 저장
+                try {
+                    multipartFile.transferTo((getFullPath(saveFileName)));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                //파일 하나 만들어서
+                file.builder().fileName(originalFilename).fileUrl("경로/" + saveFileName).fileRandomName(saveFileName).build();
+
+                //리스트에 저장
+                files.add(file);
+            }
+
+//            //file관련 부분, 파일이름/파일id/유저/저장되는 노트
             files.stream()
-                    .map(file -> new File(file.getFileName(), file.getFileUrl(), currentUser, noteSave))
+                    .map(file -> new File(file.getFileName(),file.getFileRandomName(), file.getFileUrl(), currentUser, noteSave))
                     .forEach(fileRepository::save);
+
 
             //file size가 5mb 보다 크다면 Limit 부여
             //TotalUtil에서 크기 제한 설정 가능
@@ -133,7 +197,6 @@ public class NoteService {
             }
             //note에 file 도 더해서 넣어줌
             note.uploadFile(files);
-
 
             //arrayId/step/
             return note;
@@ -288,8 +351,8 @@ public class NoteService {
         List<ProjectCrewDto> crewList = userProjectMapping.stream().map(
                         crew -> ProjectCrewDto.builder()
                                 .userId(crew.getUser().getUserCode())
-                                .userName(crew.getUser().getKakaoNickname())
-                                .userPicture(crew.getUser().getKakaoProfileImg())
+                                .userName(crew.getUser().getAccountNickname())
+                                .userPicture(crew.getUser().getProfileImg())
                                 .build())
                 .collect(Collectors.toList());
         Optional<ProjectUserMapping> projectUserMapping
@@ -320,6 +383,50 @@ public class NoteService {
                 .arrayId(arrayId)
                 .build();
 
+    }
+
+    @Transactional
+    public FileDownloadDto fileDownload(Long fileId) {
+
+        //질의문 하나만
+//        File file = fileRepository.findById(fileId);
+
+
+        //더미데이터
+        File file = new File();
+        file.builder()
+                .fileName("1")
+                .fileRandomName("1")
+                .fileUrl("2")
+                .build();
+
+        return FileDownloadDto.builder()
+                .fileName(file.getFileName())
+                .fileUrl(file.getFileUrl())
+                .fileRandomName(file.getFileRandomName())
+                .build();
+
+    }
+
+
+    private String createSaveFileName(String originalFilename) {
+        String ext = extractExt(originalFilename);
+        String uuid = UUID.randomUUID().toString();
+        return uuid + "." + ext;
+    }
+
+    // 확장자명 구하기
+    private String extractExt(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(pos + 1);
+    }
+
+    // fullPath 만들기
+    private Path getFullPath(String filename) {
+
+        //파일이 실제로 저장될 위치
+        Path uploadPath = Paths.get("C:/내문서/" + filename);
+        return uploadPath;
     }
 
 

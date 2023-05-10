@@ -152,8 +152,8 @@ public class ProjectService {
         List<ProjectCrewDto> crewList = userProjectMapping.stream().map(
                         crew -> ProjectCrewDto.builder()
                                 .userId(crew.getUser().getUserCode())
-                                .userName(crew.getUser().getKakaoNickname())
-                                .userPicture(crew.getUser().getKakaoProfileImg())
+                                .userName(crew.getUser().getAccountNickname())
+                                .userPicture(crew.getUser().getProfileImg())
                                 .build())
                 .collect(Collectors.toList());
 
@@ -209,8 +209,8 @@ public class ProjectService {
         List<ProjectCrewDto> projectCrewDtoList = projectUserMapping.stream().map(
                 crew -> ProjectCrewDto.builder()
                         .userId(crew.getUser().getUserCode())
-                        .userName(crew.getUser().getKakaoNickname())
-                        .userPicture(crew.getUser().getKakaoProfileImg())
+                        .userName(crew.getUser().getAccountNickname())
+                        .userPicture(crew.getUser().getProfileImg())
                         .build()
         ).collect(Collectors.toList());
 

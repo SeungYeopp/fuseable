@@ -1,22 +1,35 @@
 package preCapstone.fuseable.service;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import preCapstone.fuseable.config.jwt.JwtProperties;
+import preCapstone.fuseable.model.oauth.google.GoogleProfile;
+import preCapstone.fuseable.model.oauth.kakao.KakaoProfile;
 import preCapstone.fuseable.model.oauth.kakao.OauthToken;
+import preCapstone.fuseable.model.user.User;
+import preCapstone.fuseable.repository.user.UserRepository;
+
+import java.util.Date;
+
 
 @Service
 @Slf4j
 public class GoogleLoginService {
 
+    @Autowired
+    UserRepository userRepository;
     private final Environment env;
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -24,28 +37,17 @@ public class GoogleLoginService {
         this.env = env;
     }
 
-    public void socialLogin(String code) {
+    public String socialLogin(String code) {
+
         String accessToken = getAccessToken(code);
-        System.out.println("accessToken = " + accessToken);
-        JsonNode userResourceNode = getUserResource(accessToken);
-        System.out.println("userResourceNode = " + userResourceNode);
 
-        String id = userResourceNode.get("id").asText();
-        String email = userResourceNode.get("email").asText();
-        String nickname = userResourceNode.get("name").asText();
-        System.out.println("id = " + id);
-        System.out.println("email = " + email);
-        System.out.println("nickname = " + nickname);
-
+        return saveUserAndGetToken(accessToken);
     }
 
 
     private String getAccessToken(String authorizationCode) {
-//        String clientId = env.getProperty("oauth2." + "google" + ".192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
-//        String clientId = env.getProperty("192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
-//        String clientSecret = env.getProperty("oauth2." + "google" + ".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");//String redirectUri = env.getProperty("oauth2." + "redirect-uri");
-//        String tokenUri = env.getProperty("oauth2.https://oauth2.googleapis.com/token");
 
+        //Accesstoken을 얻기위한 필요한 parameter
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", authorizationCode);
         params.add("client_id", "192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
@@ -54,18 +56,20 @@ public class GoogleLoginService {
         params.add("grant_type", "authorization_code");
 
 
+        //보낼 Http 데이터 준비
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
+        //파라미터와 머리
         HttpEntity entity = new HttpEntity(params, headers);
 
+        //uri는 해당 http가 가야할 장소
         ResponseEntity<JsonNode> responseNode = restTemplate.exchange("https://oauth2.googleapis.com/token", HttpMethod.POST, entity, JsonNode.class);
         JsonNode accessTokenNode = responseNode.getBody();
         return accessTokenNode.get("access_token").asText();
     }
 
     private JsonNode getUserResource(String accessToken) {
-//        String resourceUri = env.getProperty("oauth2." + registrationId + ".resource-uri");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
@@ -73,7 +77,79 @@ public class GoogleLoginService {
         return restTemplate.exchange("https://www.googleapis.com/oauth2/v2/userinfo", HttpMethod.GET, entity, JsonNode.class).getBody();
 
     }
+
+    public String saveUserAndGetToken(String token) {
+
+        JsonNode userResourceNode = getUserResource(token);
+//        GoogleProfile profile = findProfile(token);
+
+        User user = userRepository.findByAccountEmail(userResourceNode.get("email").asText());
+        if (user == null) {
+            user = User.builder()
+                    .accountId(userResourceNode.get("id").asLong())
+                    .accountProfileImg(userResourceNode.get("picture").asText())
+                    .accountNickname(userResourceNode.get("name").asText())
+                    .accountEmail(userResourceNode.get("emial").asText())
+                    .userRole("ROLE_USER").build();
+
+            userRepository.save(user);
+        }
+
+        return createToken(user);
+    }
+
+    public String createToken(User user) {
+
+        //java-jwt 라이브러리 사용
+        String jwtToken = JWT.create()
+
+                //jwt payload에 들어갈 클레임 설정
+                //sub는 자유롭게 설정, exp는 jwt interface에 설정한 만료시간을 가져와 사용
+                .withSubject(user.getAccountEmail())
+                .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.EXPIRATION_TIME))
+
+                //개인 클레임 설정
+                //.withClaim("이름",내용)꼴로 작성, user model파일에서 들고옴
+                .withClaim("id", user.getUserCode())
+                .withClaim("nickname", user.getAccountNickname())
+
+                //signature 설정 jwt interface의 비밀키 (현재는 bang)을 넣어 해쉬 알고리즘으로 돌림
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+
+        return jwtToken;
+    }
 }
+
+//    public GoogleProfile findProfile(String token) {
+//
+//        RestTemplate rt = new RestTemplate();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Authorization", "Bearer " + token); //(1-4)
+//        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+//
+//        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest =
+//                new HttpEntity<>(headers);
+//
+//        // Http 요청 (POST 방식) 후, response 변수에 응답을 받음
+//        ResponseEntity<String> kakaoProfileResponse = rt.exchange(
+//                "https://kapi.kakao.com/v2/user/me",
+//                HttpMethod.POST,
+//                kakaoProfileRequest,
+//                String.class
+//        );
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        GoogleProfile googleProfile = null;
+//        try {
+//            googleProfile = objectMapper.readValue(GoogleProfileResponse.getBody(), GoogleProfile.class);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return googleProfile;
+//    }
+
 
 
 

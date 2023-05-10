@@ -20,17 +20,17 @@ public class User {
     @Column(name = "USER_ID")                          //필드(열) 이름
     private Long userCode;
 
-    @Column(name = "kakao_id")                           //필드(열) 이름
-    private Long kakaoId;
+    @Column(name = "account_id")                           //필드(열) 이름
+    private Long accountId;
 
-    @Column(name = "kakao_profile_img")                  //필드(열) 이름
-    private String kakaoProfileImg;
+    @Column(name = "account_profile_img")                  //필드(열) 이름
+    private String profileImg;
 
-    @Column(name = "kakao_nickname")                     //필드(열) 이름
-    private String kakaoNickname;
+    @Column(name = "account_nickname")                     //필드(열) 이름
+    private String accountNickname;
 
-    @Column(name = "kakao_email")                        //필드(열) 이름
-    private String kakaoEmail;
+    @Column(name = "account_email")                        //필드(열) 이름
+    private String accountEmail;
 
     @Column(name = "user_role")                          //필드(열) 이름
     private String userRole;
@@ -40,17 +40,17 @@ public class User {
     private Timestamp createTime;                        //유저 관리용 시간
 
     @Builder
-    public User(Long kakaoId, String kakaoProfileImg, String kakaoNickname, //메소드, 생성자에만 가능
-                String kakaoEmail, String userRole) {
+    public User(Long accountId, String accountProfileImg, String accountNickname, //메소드, 생성자에만 가능
+                String accountEmail, String userRole) {
 
-        this.kakaoId = kakaoId;
-        this.kakaoProfileImg = kakaoProfileImg;
-        this.kakaoNickname = kakaoNickname;
-        this.kakaoEmail = kakaoEmail;
+        this.accountId = accountId;
+        this.profileImg = accountProfileImg;
+        this.accountNickname = accountNickname;
+        this.accountEmail = accountEmail;
         this.userRole = userRole;
     }
 
-    public static User of(Long kakaoId, String kakaoProfileImg, String kakaoNickname, String kakaoEmail, String userRole) {
-        return new User(kakaoId, kakaoProfileImg, kakaoNickname, kakaoEmail, userRole);
+    public static User of(Long accountId, String profileImg, String accountNickname, String accountEmail, String userRole) {
+        return new User(accountId, profileImg, accountNickname, accountEmail, userRole);
     }
 }

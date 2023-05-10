@@ -77,6 +77,8 @@ public class Note extends Timestamped {
     private Long arrayId;
 
 
+
+
     @Builder
     public Note(Long noteId, String title, String content,
                 LocalDate startAt, LocalDate endAt, Step step,

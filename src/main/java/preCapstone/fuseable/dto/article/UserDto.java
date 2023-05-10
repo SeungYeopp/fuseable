@@ -25,10 +25,10 @@ public record UserDto(
 
     public static UserDto from(User user) {
         return new UserDto(
-                user.getKakaoId(),
-                user.getKakaoProfileImg(),
-                user.getKakaoNickname(),
-                user.getKakaoEmail(),
+                user.getAccountId(),
+                user.getProfileImg(),
+                user.getAccountNickname(),
+                user.getAccountEmail(),
                 user.getUserRole(),
                 user.getCreateTime()
         );

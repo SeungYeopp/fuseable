@@ -76,14 +76,14 @@ public class UserService {
 
         KakaoProfile profile = findProfile(token);
 
-        User user = userRepository.findByKakaoEmail(profile.getKakao_account().getEmail());
+        User user = userRepository.findByAccountEmail(profile.getKakao_account().getEmail());
         if(user == null) {
             user = User.builder()
-                    .kakaoId(profile.getId())
-                    .kakaoProfileImg(profile.getKakao_account().getProfile().getProfile_image_url())
-                    .kakaoNickname(profile.getKakao_account().getProfile().getNickname())
-                    .kakaoEmail(profile.getKakao_account().getEmail())
-                    //이 부분 고치기
+                    .accountId(profile.getId())
+                    .accountProfileImg(profile.getKakao_account().getProfile().getProfile_image_url())
+                    .accountNickname(profile.getKakao_account().getProfile().getNickname())
+                    .accountEmail(profile.getKakao_account().getEmail())
+                    //나중에 한번보기
                     .userRole("ROLE_USER").build();
 
             userRepository.save(user);
@@ -99,13 +99,13 @@ public class UserService {
 
                 //jwt payload에 들어갈 클레임 설정
                 //sub는 자유롭게 설정, exp는 jwt interface에 설정한 만료시간을 가져와 사용
-                .withSubject(user.getKakaoEmail())
+                .withSubject(user.getAccountEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.EXPIRATION_TIME))
 
                 //개인 클레임 설정
                 //.withClaim("이름",내용)꼴로 작성, user model파일에서 들고옴
                 .withClaim("id", user.getUserCode())
-                .withClaim("nickname", user.getKakaoNickname())
+                .withClaim("nickname", user.getAccountNickname())
 
                 //signature 설정 jwt interface의 비밀키 (현재는 bang)을 넣어 해쉬 알고리즘으로 돌림
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));

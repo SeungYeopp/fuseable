@@ -6,13 +6,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class FileDetailDto {
+public class FileUploadDetailDto {
     private String fileName;
+    private String fileRandomName;
     private String fileUrl;
 
     @Builder
-    public FileDetailDto(String fileName, String fileUrl) {
+    public FileUploadDetailDto(String fileName, String fileRandomName, String fileUrl) {
         this.fileName = fileName;
+        this.fileRandomName = fileRandomName;
         this.fileUrl = fileUrl;
     }
 
