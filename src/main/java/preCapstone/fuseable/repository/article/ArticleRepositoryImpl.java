@@ -24,10 +24,13 @@ public class ArticleRepositoryImpl implements ArticleRepositoryQuerydsl {
     }
 
     @Override
-    public List<Article> findBookmarkByProjectIdAndDate(Long projectId, LocalDate Date) {
+    public List<Article> findBookmarkByProjectIdAndDate (Long projectId, LocalDate currentDay) {
         return queryFactory
                 .selectFrom(article)
-                .where(article.project.projectId.eq(projectId))
+                .where(
+                        article.project.projectId.eq(projectId)
+                                .and(article.startAt.between(currentDay, currentDay.plusDays(3)))
+                )
                 .fetch();
     }
 

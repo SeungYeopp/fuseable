@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
+import preCapstone.fuseable.config.AESEncryptor;
 import preCapstone.fuseable.dto.project.*;
 import preCapstone.fuseable.exception.ApiRequestException;
 import preCapstone.fuseable.model.note.Note;
@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static preCapstone.fuseable.model.note.QNote.note;
-
 
 @RequiredArgsConstructor
 @Service
@@ -43,6 +41,9 @@ public class ProjectService {
 
     private final FileRepository fileRepository;
     private final EntityManager em;
+
+    private final AESEncryptor aesEncryptor;
+
     @Transactional(readOnly = true)  //읽기만하므로, 속도 빠름
     public List<ProjectReadDto> projectReadList(Long userId) {  //현재 사용자를 받아서, 사용자의 프로젝트 리스트를 알려줌
 
@@ -240,6 +241,59 @@ public class ProjectService {
         return ProjectBookmarkDto.builder()
                 .bookmark(projectUserMapping.get().getBookmark())
                 .build();
+    }
+
+
+    @Transactional
+    public ProjectInviteDto inviteProject(String inviteCode, Long userId) {
+
+        String decodedId= null;
+        Long decodedLong = null;
+        try {
+            decodedId= aesEncryptor.decrypt(inviteCode);
+            decodedLong = Long.parseLong(decodedId);
+        } catch (NumberFormatException e) {
+            log.info("복호화 된 프로젝트ID가 숫자가 아닙니다. 프로젝트ID = " + decodedId);
+            throw new ApiRequestException("유효하지 않은 초대 코드입니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new ApiRequestException("유효하지 않은 초대 코드 입니다.");
+        }
+
+        Project project = projectRepository.findByOneProjectId(decodedLong);
+
+        User user = userRepository.findByUserCode(userId);
+
+        Boolean defaultBookmark = false;
+
+        if (user == null)
+            throw new IllegalArgumentException();
+        // 프로젝트와 유저 매핑 테이블에도 저장 , 현재 user와 project, Role을 요구로하므로 이 사항들을 build해줌
+        ProjectUserMapping projectUserMapping = ProjectUserMapping.builder()
+                .role(Role.ROLE_USER)  //프로젝트 참여자
+                .user(user)      //현재 유저 정보
+                .project(project)       //프로젝트 (ID + Title)
+                .bookmark(defaultBookmark) //기본값
+                .build();
+
+        //해당 내용을 ProjectUserMappingRepository에 저장
+        projectUserMappingRepository.save(projectUserMapping);
+
+        return new ProjectInviteDto(projectUserMapping.getProject().getTitle());
+    }
+
+    @Transactional
+    public ProjectCreateInviteDto createInviteCode(Long projectId, Long userId) {
+
+        String encodedId = null;
+        try {
+            encodedId = aesEncryptor.encrypt(Long.toString(projectId));
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new ApiRequestException("초대 코드 발급 중 오류가 발생하였습니다.");
+        }
+
+        return ProjectCreateInviteDto.builder().inviteCode(encodedId).build();
     }
 
 

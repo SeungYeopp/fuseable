@@ -67,5 +67,17 @@ public class ProjectController {
         return projectService.bookmarkProject(projectId,userId);
     }
 
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @PostMapping("/Invite/{userId}/{inviteCode}")
+    public ProjectInviteDto inviteProject(@PathVariable("inviteCode") String inviteCode,@PathVariable ("userId") Long userId){
+        return projectService.inviteProject(inviteCode,userId);
+    }
+
+    @CrossOrigin(origins="*", allowedHeaders = "*")
+    @GetMapping("/Invite/{userId}/{projectId}")
+    public ProjectCreateInviteDto inviteProject(@PathVariable("projectId") Long projectId,@PathVariable ("userId") Long userId){
+        return projectService.createInviteCode(projectId,userId);
+    }
+
     // 초대 (보류)
 }

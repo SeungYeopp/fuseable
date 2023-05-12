@@ -40,6 +40,8 @@ public class TotalUtil {
     }
 
 
+
+
      /*
     //getStepList를 위한 빌드업용
     //noteList를 통하여 hash 만들어줌
