@@ -50,16 +50,5 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
-//    @GetMapping("google")
-//    public void getGoogleAuthUrl(HttpServletResponse response) throws Exception {
-//        response.sendRedirect(GoogleOAuth.g);
-//    }
-
-//    @GetMapping("/google/login")
-//    public SingleResult<TokenUserDto> callback(
-//            @RequestParam(name = "code") String code) throws IOException {
-//        return oAuthService.googlelogin(code);
-//    }
-
 
 }
