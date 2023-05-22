@@ -29,19 +29,14 @@ public class File {
     private String fileUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Note_ID")
     private Note note;
 
     @Builder
-    public File(String fileName, String fileRandomName, String fileUrl, User user, Note note) {
+    public File(String fileName, String fileRandomName, String fileUrl, Note note) {
         this.fileName = fileName;
         this.fileUrl = fileUrl;
         this.fileRandomName = fileRandomName;
-        this.user = user;
         this.note = note;
     }
 

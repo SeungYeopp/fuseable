@@ -5,13 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import preCapstone.fuseable.config.TotalUtil;
+import preCapstone.fuseable.dto.comment.CommentListDto;
+import preCapstone.fuseable.dto.comment.CommentReadDto;
+import preCapstone.fuseable.dto.file.FileDeleteDto;
 import preCapstone.fuseable.dto.file.FileDownloadDto;
 import preCapstone.fuseable.dto.file.FileUploadDetailDto;
 import preCapstone.fuseable.dto.note.*;
 import preCapstone.fuseable.dto.project.ProjectCrewDto;
 import preCapstone.fuseable.exception.ApiRequestException;
+import preCapstone.fuseable.model.comment.Comment;
 import preCapstone.fuseable.model.file.File;
 import preCapstone.fuseable.model.note.Note;
 import preCapstone.fuseable.model.note.Step;
@@ -48,6 +53,8 @@ public class NoteService {
 
     private final EntityManager em;
 
+    private final CommentService commentService;
+
     //    private final ProjectUserMapping projectUserMapping;
 
 
@@ -62,15 +69,14 @@ public class NoteService {
 
         Step step = Step.valueOf(noteCreateDetail.getStep());
         LocalDate endAt = totalUtil.changeType(noteCreateDetail.getEndAt());
-
-
-        List<FileUploadDetailDto> files = new ArrayList<>();
+        LocalDate startAt = LocalDate.now();
 
         Note lastNote = totalUtil.getLastNote(noteList)
                 .stream()
                 .findFirst().orElse(null);
 
         User currentUser = userRepository.findByUserCode(userId);
+
 
         if (lastNote != null) {
 
@@ -80,7 +86,7 @@ public class NoteService {
             title/content/endAt/step/user(글쓴이)/projectId/previousId(lastnoteid)/nextId(0)/배열Id
             */
             Note noteSave = noteRepository.save(Note
-                    .of(noteCreateDetail, endAt, step, currentUser, project, lastNote.getNoteId(), 0L, lastNote.getArrayId() + 1,userId));
+                    .of(noteCreateDetail, startAt, endAt, step, currentUser, project, lastNote.getNoteId(), 0L, lastNote.getArrayId() + 1,userId));
 
             //마지막 노트 다음 노트가 생겼으므로 이를 업데이트 해줌.
             lastNote.updatenextId(noteSave.getNoteId());
@@ -88,51 +94,61 @@ public class NoteService {
             //return을 위한 준비
             NoteCreateDto note = NoteCreateDto.fromEntity(noteSave);
 
+            List<FileUploadDetailDto> files = new ArrayList<>();
 
             //file 관련 코드
-            int len = fileList.size();
-            for(int i = 0;i<len;i++) {
+            if(!CollectionUtils.isEmpty(fileList)) {
 
-                FileUploadDetailDto file = new FileUploadDetailDto();
-
-                //리스트 하나씩 빼내기
-                MultipartFile multipartFile = fileList.get(i);
-
-                //확장자명
-                String contentType = multipartFile.getContentType();
-
-                //원래 파일이름
-                String originalFilename = multipartFile.getOriginalFilename();
-
-                //랜덤 파일이름 (파일이름 중복 방지용)
-                String saveFileName = createSaveFileName(originalFilename);
-
-                //데이터 저장
-                try {
-                    multipartFile.transferTo((getFullPath(saveFileName)));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                //file size가 5보다 크다면 Limit 부여
+                //TotalUtil에서 크기 제한 설정 가능
+                if (fileList.size() > totalUtil.getLimitOfFile()) {
+                    throw new ApiRequestException(totalUtil.messageForLimitOfFile());
                 }
 
-                //파일 하나 만들어서
-                file.builder().fileName(originalFilename).fileUrl("C:/Users/" + saveFileName).fileRandomName(saveFileName).build();
+                int len = fileList.size();
 
-                //리스트에 저장
-                files.add(file);
+                for (int i = 0; i < len; i++) {
+
+                    //리스트 하나씩 빼내기
+                    MultipartFile multipartFile = fileList.get(i);
+
+                    //확장자명
+                    String contentType = multipartFile.getContentType();
+
+                    //원래 파일이름
+                    String originalFilename = multipartFile.getOriginalFilename();
+
+                    //랜덤 파일이름 (파일이름 중복 방지용)
+                    String saveFileName = createSaveFileName(originalFilename);
+
+                    String filePath = "C:/Users/Ku/" + saveFileName;
+
+                    //데이터 저장
+                    try {
+                        multipartFile.transferTo((getFullPath(saveFileName)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    FileUploadDetailDto file = FileUploadDetailDto.fromEntity(originalFilename,filePath,saveFileName);
+
+//                    //파일 하나 만들어서
+//                    file.builder().fileName(originalFilename).fileUrl(filePath).fileRandomName(saveFileName).build();
+
+                    //리스트에 저장
+                    files.add(file);
+                }
+
+
+                //file관련 부분, 파일이름/파일id/유저/저장되는 노트
+                files.stream()
+                        .map(file -> new File(file.getFileName(), file.getFileUrl(),file.getFileRandomName(), noteSave))
+                        .forEach(fileRepository::save);
+
+
+                //note에 file 도 더해서 넣어줌
+                note.uploadFile(files);
             }
-
-//            //file관련 부분, 파일이름/파일id/유저/저장되는 노트
-            files.stream()
-                    .map(file -> new File(file.getFileName(),file.getFileRandomName(), file.getFileUrl(), currentUser, noteSave))
-                    .forEach(fileRepository::save);
-
-//            //file size가 5mb 보다 크다면 Limit 부여
-//            //TotalUtil에서 크기 제한 설정 가능
-           if (files.size() > totalUtil.getLimitOfFile()) {
-                throw new ApiRequestException(totalUtil.messageForLimitOfFile());
-           }
-            //note에 file 도 더해서 넣어줌
-            note.uploadFile(files);
 
 
             //arrayId/step/
@@ -147,60 +163,106 @@ public class NoteService {
             title/content/endAt/step/user(글쓴이)/projectId/previousId(lastnoteid)/nextId(0)/배열Id
             */
             Note noteSave = noteRepository.save(Note
-                    .of(noteCreateDetail, endAt, step, currentUser, project, 0L, 0L, 0L,userId));
+                    .of(noteCreateDetail, startAt, endAt, step, currentUser, project, 0L, 0L, 0L,userId));
+
+            List<FileUploadDetailDto> files = new ArrayList<>();
+
 
             //return을 위한 준비
             NoteCreateDto note = NoteCreateDto.fromEntity(noteSave);
 
             //file 관련 코드
-            int len = fileList.size();
-            for(int i = 0;i<len;i++) {
+            if(!CollectionUtils.isEmpty(fileList)) {
 
-                FileUploadDetailDto file = new FileUploadDetailDto();
+                int len = fileList.size();
 
-                //리스트 하나씩 빼내기
-                MultipartFile multipartFile = fileList.get(i);
+                for (int i = 0; i < len; i++) {
 
-                //확장자명
-                String contentType = multipartFile.getContentType();
+                    //file size가 5보다 크다면 Limit 부여
+                    //TotalUtil에서 크기 제한 설정 가능
+                    if (fileList.size() > totalUtil.getLimitOfFile()) {
+                        throw new ApiRequestException(totalUtil.messageForLimitOfFile());
+                    }
 
-                //원래 파일이름
-                String originalFilename = multipartFile.getOriginalFilename();
+                    //리스트 하나씩 빼내기
+                    MultipartFile multipartFile = fileList.get(i);
 
-                //랜덤 파일이름 (파일이름 중복 방지용)
-                String saveFileName = createSaveFileName(originalFilename);
+                    //확장자명
+                    String contentType = multipartFile.getContentType();
 
-                //데이터 저장
-                try {
-                    multipartFile.transferTo((getFullPath(saveFileName)));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    //원래 파일이름
+                    String originalFilename = multipartFile.getOriginalFilename();
+
+                    //랜덤 파일이름 (파일이름 중복 방지용)
+                    String saveFileName = createSaveFileName(originalFilename);
+
+                    String filePath = "C:/Users/Ku/" + saveFileName;
+
+                    //데이터 저장
+                    try {
+                        multipartFile.transferTo((getFullPath(saveFileName)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    FileUploadDetailDto file = FileUploadDetailDto.fromEntity(originalFilename,filePath,saveFileName);
+
+//                    //파일 하나 만들어서
+//                    file.builder().fileName(originalFilename).fileUrl("C:/Users/"+ saveFileName).fileRandomName(saveFileName).build();
+
+                    //리스트에 저장
+                    files.add(file);
                 }
 
-                //파일 하나 만들어서
-                file.builder().fileName(originalFilename).fileUrl("C:/Users/" + saveFileName).fileRandomName(saveFileName).build();
 
-                //리스트에 저장
-                files.add(file);
+                //file관련 부분, 파일이름/파일id/유저/저장되는 노트
+                files.stream()
+                        .map(file -> new File(file.getFileName(), file.getFileUrl(),file.getFileRandomName(),  noteSave))
+                        .forEach(fileRepository::save);
+
+                //note에 file 도 더해서 넣어줌
+                note.uploadFile(files);
             }
-
-//            //file관련 부분, 파일이름/파일id/유저/저장되는 노트
-            files.stream()
-                    .map(file -> new File(file.getFileName(),file.getFileRandomName(), file.getFileUrl(), currentUser, noteSave))
-                    .forEach(fileRepository::save);
-
-
-            //file size가 5mb 보다 크다면 Limit 부여
-            //TotalUtil에서 크기 제한 설정 가능
-            if (files.size() > totalUtil.getLimitOfFile()) {
-                throw new ApiRequestException(totalUtil.messageForLimitOfFile());
-            }
-            //note에 file 도 더해서 넣어줌
-            note.uploadFile(files);
 
             //arrayId/step/
             return note;
         }
+    }
+
+
+    @Transactional
+    public NoteReadDto readNote(Long userId, Long projectId, Long noteId) {
+
+        Project project = projectRepository.findByOneProjectId(projectId);
+
+        Note note = noteRepository.findById(noteId).orElse(null);
+
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ApiRequestException("등록되지 않은 유저의 접근입니다.")
+        );
+
+        List<Comment> commentList = commentRepository.findByNoteId(noteId);
+
+
+//        List<CommentReadDto> commentReadEachDtoList =
+//                commentList
+//                        .stream()
+//                        .map(e -> CommentReadDto.fromEntity(e))
+//
+
+        List<File> files = fileRepository.findByNoteId(noteId);
+
+
+        return NoteReadDto.builder()
+                .noteId(note.getNoteId())
+                .title(note.getTitle())
+                .content(note.getContent())
+                .endAt(note.getEndAt())
+                .startAt(note.getStartAt())
+                .comments(commentList)
+                .files(files)
+                .build();
     }
 
 
@@ -235,7 +297,7 @@ public class NoteService {
 
         //제일 뒤인 경우
         else if((note.getPreviousId() != 0L) && (note.getNextId() == 0L )) {
-           //제일 마지막 note이므로 배열을 따로 조정할 필요가 없음
+            //제일 마지막 note이므로 배열을 따로 조정할 필요가 없음
             previousNote.updatenextId(0L);
         }
 
@@ -254,11 +316,11 @@ public class NoteService {
         fileRepository.deleteFileByNoteId(note.getNoteId());
 
         //noteId를 통해 자신 삭제
-       noteRepository.deleteNoteById(note.getNoteId());
+        noteRepository.deleteNoteById(note.getNoteId());
 
-       commentRepository.deleteCommentByNoteId(note.getNoteId());
+        commentRepository.deleteCommentByNoteId(note.getNoteId());
 
-       //이외에 삭제할 Repository 추후 추가
+        //이외에 삭제할 Repository 추후 추가
 
 
         //위에서 이루어진 삭제가 db에 적용되고, 이후에 노트리스트를 다시 가져오기위해서
@@ -341,7 +403,7 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-   public NoteFindMine findNote(Long userId, Long projectId){
+    public NoteFindMine findNote(Long userId, Long projectId){
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ApiRequestException("회원을 조회할 프로젝트가 존재하지 않습니다."));
 
@@ -360,36 +422,81 @@ public class NoteService {
         //projectId와 userId로 해당 유저의 모든 노트리스트 얻음
         List<Note> noteList = noteRepository.findByProjectIdAndUserId(projectId,userId);
 
-       //ArrayId 기준으로 정렬
-       List<Note> sortedList = noteList.stream()
-               .sorted(Comparator.comparing(Note::getArrayId)).toList();
+        //ArrayId 기준으로 정렬
+        List<Note> sortedList = noteList.stream()
+                .sorted(Comparator.comparing(Note::getArrayId)).toList();
 
         return NoteFindMine.fromEntity(sortedList);
-   }
+    }
 
 
     @Transactional
-    public NoteUpdateDto updateNote(Long projectId, Long arrayId, NoteUpdateDetailDto noteDetail) {
+    public NoteUpdateDto updateNote(Long userId, Long projectId, Long noteId, NoteUpdateDetailDto noteDetail, List<MultipartFile> fileList) {
 
-        Note note = noteRepository.findByArrayIdAndProjectId(arrayId, projectId);
+        Note note = noteRepository.findById(noteId)
+                .orElseThrow(() -> new ApiRequestException("해당 노트가 존재하지 않습니다."));
+
 
         //새로 create 된 note의 step(String to Step)확인, date는 String to LocalDate, build를 위한 준비물
         LocalDate endAt = totalUtil.changeType(noteDetail.getEndAt());
 
-        note.updateChanges(noteDetail,endAt);
+        note.updateChanges(noteDetail, endAt);
+
+        List<FileUploadDetailDto> files = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(fileList)) {
+
+            int len = fileList.size();
+
+            for (int i = 0; i < len; i++) {
+
+                //리스트 하나씩 빼내기
+                MultipartFile multipartFile = fileList.get(i);
+
+                //확장자명
+                String contentType = multipartFile.getContentType();
+
+                //원래 파일이름
+                String originalFilename = multipartFile.getOriginalFilename();
+
+                //랜덤 파일이름 (파일이름 중복 방지용)
+                String saveFileName = createSaveFileName(originalFilename);
+
+                String filePath = "C:/Users/Ku/" + saveFileName;
+
+                //데이터 저장
+                try {
+                    multipartFile.transferTo((getFullPath(saveFileName)));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                FileUploadDetailDto file = FileUploadDetailDto.fromEntity(originalFilename, filePath, saveFileName);
+
+//                    //파일 하나 만들어서
+//                    file.builder().fileName(originalFilename).fileUrl("C:/Users/"+ saveFileName).fileRandomName(saveFileName).build();
+
+                //리스트에 저장
+                files.add(file);
+            }
+        }
+
+        //file관련 부분, 파일이름/파일id/유저/저장되는 노트
+        files.stream()
+                .map(file -> new File(file.getFileName(), file.getFileUrl(), file.getFileRandomName(), note))
+                .forEach(fileRepository::save);
 
         return NoteUpdateDto
                 .builder()
-                .arrayId(arrayId)
+                .noteId(noteId)
                 .build();
-
     }
 
     @Transactional
     public FileDownloadDto fileDownload(Long fileId) {
 
         //질의문 하나만
-       File file = fileRepository.findByFileId(fileId);
+        File file = fileRepository.findByFileId(fileId);
 
 
 
@@ -399,6 +506,21 @@ public class NoteService {
                 .fileRandomName(file.getFileRandomName())
                 .build();
 
+    }
+
+    @Transactional
+    public FileDeleteDto deleteFile(Long userId, Long noteId, Long fileId) {
+
+        Note note = noteRepository.findById(noteId)
+                .orElseThrow(() -> new ApiRequestException("해당 노트가 존재하지 않습니다."));
+
+        if(note.getUser().getUserCode()!= userId) {
+            throw new ApiRequestException("글쓴이가 아닙니다.");
+        }
+
+        fileRepository.deleteById(fileId);
+
+        return FileDeleteDto.builder().fileId(fileId).build();
     }
 
 
@@ -418,8 +540,13 @@ public class NoteService {
     private Path getFullPath(String filename) {
 
         //파일이 실제로 저장될 위치
-        Path uploadPath = Paths.get("C:/Users/" + filename);
+        Path uploadPath = Paths.get("C:/Users/Ku/" + filename);
         return uploadPath;
+    }
+
+    public List<Note> alarmNote(Long projectId) {
+        Project project = projectRepository.findByOneProjectId(projectId);
+        return noteRepository.alarmNote(projectId);
     }
 
 

@@ -10,7 +10,7 @@ import preCapstone.fuseable.service.GoogleLoginService;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "/login/oauth2")
+@RequestMapping("/api/login/oauth2")
 public class GoogleLoginController {
 
     GoogleLoginService googleLoginService;
@@ -19,7 +19,7 @@ public class GoogleLoginController {
         this.googleLoginService = googleLoginService;
     }
 
-    @GetMapping("/code")
+    @GetMapping("/token")
     public ResponseEntity googleLogin(@RequestParam("code") String code) {
         String jwtToken = googleLoginService.socialLogin(code);
 

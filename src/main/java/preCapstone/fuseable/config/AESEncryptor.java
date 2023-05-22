@@ -2,11 +2,14 @@ package preCapstone.fuseable.config;
 
 
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Component
@@ -14,7 +17,10 @@ public class AESEncryptor {
 
     public static String alg;
 
+//    private IvParameterSpec IV;
+
     private final byte[] key;
+
 
     public String encrypt(String plainText) throws Exception {
         return Base64.getEncoder().encodeToString(this.encrypt(plainText.getBytes(StandardCharsets.UTF_8)));
@@ -42,8 +48,10 @@ public class AESEncryptor {
 
     public AESEncryptor(@Value("${AES.key}") String key) {
         this.key = key.getBytes(StandardCharsets.UTF_8);
-        this.alg = "AES/CBC/PKCS5Padding";
+//    this.IV = new IvParameterSpec(iv.getBytes)
+        this.alg = "AES";
     }
+
 
 
 }

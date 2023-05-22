@@ -85,8 +85,13 @@ public class ArticleService {
     public List<Article> bookmarkArticles(Long projectId) {
 
         LocalDate currentDate = LocalDate.now();
+        List<Article> articles = articleRepository.findBookmarkByProjectIdAndDate(projectId, currentDate);
 
-        return articleRepository.findBookmarkByProjectIdAndDate(projectId,currentDate);
+        for (Article article : articles) {
+            article.setBookmark(true);
+        }
+
+        return articles;
     }
 
 //

@@ -98,11 +98,15 @@ public class NoteRepositoryImpl implements NoteRepositoryQuerydsl {
                 .where(note.project.projectId.eq(projectId).and(note.arrayId.gt(arrayId)).and(note.arrayId.loe(newArrayId))).execute();
     }
 
-    public List<Note> alarmNote() {
-        LocalDate threeDaysAgo = LocalDate.now().minus(3, ChronoUnit.DAYS);
+    public List<Note> alarmNote(Long projectId) {
+        LocalDate today = LocalDate.now();
+        LocalDate fourDaysLater = today.plusDays(4);
 
         return queryFactory.selectFrom(note)
-                .where(note.endAt.after(threeDaysAgo))
+                .where(
+                        note.project.projectId.eq(projectId)
+                                .and(note.endAt.after(today.minusDays(1)))
+                                .and(note.endAt.before(fourDaysLater)))
                 .fetch();
     }
 

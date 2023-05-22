@@ -19,8 +19,6 @@ public class NoteCreateDetailDto {
 
     private String endAt;
 
-//    private List<FileDetailDto> files;
-
     //endAt과 step은 각각 localdate, step 이었기때문에 string으로 바꿔서 넣어줌
     @Builder
     public NoteCreateDetailDto(Long arrayId,  String step, String title, String content, String endAt) {
@@ -29,6 +27,5 @@ public class NoteCreateDetailDto {
         this.title = title;
         this.content = content;
         this.endAt = endAt;
-//        this.files = files;
     }
 }

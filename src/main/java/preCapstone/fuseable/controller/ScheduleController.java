@@ -31,7 +31,7 @@ public class ScheduleController {
     //front에서 시간표 저장(업데이트) 버튼 누를 시 활성화
     //scheduleId를 통해 schedule의 checkbox 통으로 update
     @CrossOrigin(origins="*", allowedHeaders = "*")
-    @GetMapping("/update/{scheduleId}/")
+    @PostMapping("/update/{scheduleId}")
     public ScheduleUpdateDto updateSchedule(@PathVariable("scheduleId") Long scheduleId, @RequestBody ScheduleUpdateDetailDto scheduleUpdateDetail) {
         return scheduleService.updateSchedule(scheduleId, scheduleUpdateDetail);
     }

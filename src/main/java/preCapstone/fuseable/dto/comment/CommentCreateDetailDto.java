@@ -6,14 +6,13 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class CommentCreateDto {
-    private Long commentId;
+public class CommentCreateDetailDto {
+
     private String content;
     private Long writerId;
 
     @Builder
-    public CommentCreateDto(Long commentId, String content, Long writerId) {
-        this.commentId = commentId;
+    public CommentCreateDetailDto(String content, Long writerId) {
         this.content = content;
         this.writerId = writerId;
     }

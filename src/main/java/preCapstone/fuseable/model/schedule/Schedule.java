@@ -38,8 +38,8 @@ public class Schedule {
     }
 
 
-    public void updateCheckBox (ScheduleUpdateDetailDto updateDetail) {
-        this.checkBox= updateDetail.getCheckBox();
+    public void updateCheckBox (String checkBox) {
+        this.checkBox= checkBox;
     }
 
 

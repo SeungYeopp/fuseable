@@ -52,5 +52,13 @@ public class FileRepositoryImpl implements FileRepositoryQuerydsl{
                 .fetchOne();
     }
 
+    @Override
+    public List<File> findByNoteId(Long noteId) {
+
+        return queryFactory
+                .selectFrom(file)
+                .where(file.note.noteId.eq(noteId))
+                .fetch();
+    }
 
 }

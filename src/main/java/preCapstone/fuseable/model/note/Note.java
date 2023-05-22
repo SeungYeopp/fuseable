@@ -118,10 +118,11 @@ public class Note extends Timestamped {
         this.content = noteUpdate.getContent();
         this.endAt = date;
     }
-    public static Note of(NoteCreateDetailDto noteDetail, LocalDate endAt, Step step, User user, Project project, Long previousId, Long nextId, Long arrayId, Long writerId) {
+    public static Note of(NoteCreateDetailDto noteDetail, LocalDate startAt, LocalDate endAt, Step step, User user, Project project, Long previousId, Long nextId, Long arrayId, Long writerId) {
         return Note.builder()
                 .title(noteDetail.getTitle())
                 .content(noteDetail.getContent())
+                .startAt(startAt)
                 .endAt(endAt)
                 .step(step)
                 .project(project)
@@ -132,21 +133,6 @@ public class Note extends Timestamped {
                 .writerId(writerId)
                 .build();
     }
-
-//    public static Note ofcreate(NoteCreateDetailDto note,  Step step, User user, Project project,Long previousId,Long nextId,  Long arrayId) {
-//        return Note.builder()
-//                .title(null)
-//                .content(null)
-//                .project(project)
-//                .endAt(null)
-//                .step(step)
-//                .user(user)
-//                .previousId(previousId)
-//                .nextId(nextId)
-//                .arrayId(arrayId)
-//                .build();
-//    }
-
 
 
 }

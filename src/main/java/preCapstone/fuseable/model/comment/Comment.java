@@ -1,5 +1,6 @@
 package preCapstone.fuseable.model.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Comment {
     @Column(name = "COMMENT", columnDefinition = "TEXT")
     private String comment;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "USER_ID")
     private User user;

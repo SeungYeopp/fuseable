@@ -29,7 +29,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryQuerydsl {
                 .selectFrom(article)
                 .where(
                         article.project.projectId.eq(projectId)
-                                .and(article.startAt.between(currentDay, currentDay.plusDays(3)))
+                                .and(article.startAt.between(currentDay.minusDays(3), currentDay))
                 )
                 .fetch();
     }

@@ -17,5 +17,11 @@ public class FileUploadDetailDto {
         this.fileRandomName = fileRandomName;
         this.fileUrl = fileUrl;
     }
-
+    public static FileUploadDetailDto fromEntity(String name, String randomName, String url) {
+        return FileUploadDetailDto.builder()
+                .fileName(name)
+                .fileRandomName(randomName)
+                .fileUrl(url)
+                .build();
+    }
 }

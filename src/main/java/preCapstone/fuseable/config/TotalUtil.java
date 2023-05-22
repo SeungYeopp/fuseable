@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class TotalUtil {
 
     //file 사이즈 제한
-   private final int LIMIT_OF_FILES = 5;
+   private final int LIMIT_OF_FILES = 10000000;
 
 
    public List<Note> getLastNote(List<Note> noteList) {

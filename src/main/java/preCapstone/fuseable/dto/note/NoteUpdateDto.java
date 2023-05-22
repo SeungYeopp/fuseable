@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 public class NoteUpdateDto {
-    private Long arrayId;
+    private Long noteId;
 
     @Builder
-    public NoteUpdateDto(Long arrayId) {
-        this.arrayId = arrayId;
+    public NoteUpdateDto(Long noteId) {
+        this.noteId = noteId;
 
     }
 }

@@ -21,6 +21,7 @@ import preCapstone.fuseable.model.oauth.kakao.OauthToken;
 import preCapstone.fuseable.model.user.User;
 import preCapstone.fuseable.repository.user.UserRepository;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 
@@ -52,7 +53,7 @@ public class GoogleLoginService {
         params.add("code", authorizationCode);
         params.add("client_id", "192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
         params.add("client_secret", "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");
-        params.add("redirect_uri", "http://localhost:8080/login/oauth2/code");
+        params.add("redirect_uri", "http://localhost:3000/googleredirect");
         params.add("grant_type", "authorization_code");
 
 
@@ -84,12 +85,16 @@ public class GoogleLoginService {
 
 
         User user = userRepository.findByAccountEmail(userResourceNode.get("email").asText());
+        String idString = userResourceNode.get("id").asText();
+        BigInteger idBigInteger = new BigInteger(idString);
+        long id = idBigInteger.longValue();
+
         if (user == null) {
             user = User.builder()
-                    .accountId(userResourceNode.get("id").asLong())
+                    .accountId(id)
                     .accountProfileImg(userResourceNode.get("picture").asText())
                     .accountNickname(userResourceNode.get("name").asText())
-                    .accountEmail(userResourceNode.get("emial").asText())
+                    .accountEmail(userResourceNode.get("email").asText())
                     .userRole("ROLE_USER").build();
 
             userRepository.save(user);

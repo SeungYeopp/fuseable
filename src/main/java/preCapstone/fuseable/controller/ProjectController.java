@@ -68,14 +68,14 @@ public class ProjectController {
     }
 
     @CrossOrigin(origins="*", allowedHeaders = "*")
-    @PostMapping("/Invite/{userId}/{inviteCode}")
-    public ProjectInviteDto inviteProject(@PathVariable("inviteCode") String inviteCode,@PathVariable ("userId") Long userId){
+    @PostMapping("/invite/{userId}")
+    public ProjectInviteDto inviteProject(@PathVariable ("userId") Long userId, @RequestBody ProjectInviteCodeDto inviteCode) {
         return projectService.inviteProject(inviteCode,userId);
     }
 
     @CrossOrigin(origins="*", allowedHeaders = "*")
-    @GetMapping("/Invite/{userId}/{projectId}")
-    public ProjectCreateInviteDto inviteProject(@PathVariable("projectId") Long projectId,@PathVariable ("userId") Long userId){
+    @GetMapping("/invite/{userId}/{projectId}")
+    public ProjectCreateInviteDto inviteCodeProject(@PathVariable("projectId") Long projectId,@PathVariable ("userId") Long userId){
         return projectService.createInviteCode(projectId,userId);
     }
 

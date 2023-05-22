@@ -2,6 +2,7 @@ package preCapstone.fuseable.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import preCapstone.fuseable.dto.comment.CommentCreateDetailDto;
 import preCapstone.fuseable.dto.comment.CommentCreateDto;
 import preCapstone.fuseable.dto.comment.CommentDeleteDto;
 import preCapstone.fuseable.dto.comment.CommentListDto;
@@ -15,19 +16,13 @@ public class CommentController {
 
     //코멘트 작성
     @PostMapping("/api/comments/{noteId}")
-    public CommentCreateDto createComment(@PathVariable Long noteId, User user, @RequestBody CommentCreateDto CommentCreateDto){
-        return commentService.createComment(noteId, user, CommentCreateDto);
-    }
-
-    //코멘트 읽기
-    @GetMapping("/api/comments/{noteId}")
-    public CommentListDto readComments(@PathVariable Long noteId, User user){
-        return commentService.readComments(noteId, user);
+    public CommentCreateDto createComment(@PathVariable Long noteId, @RequestBody CommentCreateDetailDto CommentCreateDetail){
+        return commentService.createComment(noteId, CommentCreateDetail);
     }
 
     //코멘트 삭제
-    @DeleteMapping("/api/comments/{commentId}")
-    public CommentDeleteDto deleteComment(@PathVariable Long commentId, User user) {
-        return commentService.deleteComment(commentId, user);
+    @DeleteMapping("/api/comments/{userId}/{commentId}")
+    public CommentDeleteDto deleteComment(@PathVariable("userId") Long userId, @PathVariable("commentId") Long commentId) {
+        return commentService.deleteComment(userId, commentId);
     }
 }

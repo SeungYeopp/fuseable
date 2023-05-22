@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import preCapstone.fuseable.dto.schedule.*;
 import preCapstone.fuseable.exception.ApiRequestException;
+import preCapstone.fuseable.exception.ResourceNotFoundException;
 import preCapstone.fuseable.model.project.Project;
 import preCapstone.fuseable.model.project.ProjectUserMapping;
 import preCapstone.fuseable.model.schedule.Schedule;
@@ -77,14 +78,18 @@ public class ScheduleService {
 
     }
     public ScheduleUpdateDto updateSchedule(Long scheduleId, ScheduleUpdateDetailDto scheduleUpdateDetail) {
-        scheduleReposiotry.updateCheckBoxById(scheduleId,scheduleUpdateDetail);
+
+        Schedule schedule = scheduleReposiotry.findById(scheduleId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 유저가 존재하지 않습니다."));
+
+        schedule.updateCheckBox(scheduleUpdateDetail.getCheckBox());
+
 
         return ScheduleUpdateDto.builder()
                 .checkBox(scheduleUpdateDetail.getCheckBox())
                 .build();
-
-
     }
+
     public ScheduleReadAllDto readAllSchedule(Long projectId) {
 
         //projectId로부터 시작해 프로젝트멤버들을 찾는 내용
@@ -110,7 +115,7 @@ public class ScheduleService {
         }
 
         //각 멤버들의 시간시간을 check되었는지 확인하여 return할 checkbox를 만드는 loop
-        for(int i = 0;i<70;i++) {
+        for(int i = 0; i < 70; i++) {
             int check = 0;
             for (int j = 0; j<size; j++) {
                 if(check == 1) break;

@@ -1,12 +1,18 @@
 spring:
-
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
   datasource:
-
-    url: jdbc:h2:tcp://localhost/~/fuseable
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://fuseable-mysql.ccokzxghzzps.ap-northeast-2.rds.amazonaws.com:3306/fuseable?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: admin
+    password: fuseable_2023
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:h2:tcp://localhost/~/fuseable
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
     spring:
       security:
         oauth2:
@@ -65,7 +71,12 @@ logging.level:
 
 
 AES:
-  key: 01234567890123456789012345678901
+  key: 0123456789012345
+
+server:
+  tomcat:
+    max-http-post-size: 10MB
+
 
 
 

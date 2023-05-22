@@ -245,13 +245,16 @@ public class ProjectService {
 
 
     @Transactional
-    public ProjectInviteDto inviteProject(String inviteCode, Long userId) {
+    public ProjectInviteDto inviteProject(ProjectInviteCodeDto inviteCode, Long userId) {
 
         String decodedId= null;
         Long decodedLong = null;
+
         try {
-            decodedId= aesEncryptor.decrypt(inviteCode);
+            decodedId= aesEncryptor.decrypt(inviteCode.getInviteCode());
+            log.info(decodedId);
             decodedLong = Long.parseLong(decodedId);
+            System.out.println(decodedLong);
         } catch (NumberFormatException e) {
             log.info("복호화 된 프로젝트ID가 숫자가 아닙니다. 프로젝트ID = " + decodedId);
             throw new ApiRequestException("유효하지 않은 초대 코드입니다.");
@@ -292,6 +295,8 @@ public class ProjectService {
             log.info(e.getMessage());
             throw new ApiRequestException("초대 코드 발급 중 오류가 발생하였습니다.");
         }
+
+        log.info(encodedId);
 
         return ProjectCreateInviteDto.builder().inviteCode(encodedId).build();
     }
