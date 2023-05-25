@@ -43,7 +43,7 @@ public class UserService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "a8c0f54a40e17de117e2f618394a3e20");
-        params.add("redirect_uri", "http://fuseable.cloud:3000/redirect");
+        params.add("redirect_uri", "http://fuseable.cloud/redirect");
         params.add("code", code);
 //         params.add("client_secret", "bang"); // 생략 가능!
 
