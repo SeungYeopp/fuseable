@@ -121,7 +121,7 @@ public class NoteService {
                     //랜덤 파일이름 (파일이름 중복 방지용)
                     String saveFileName = createSaveFileName(originalFilename);
 
-                    String filePath = "C:/Users/Public/Documents" + saveFileName;
+                    String filePath = "/usr/" + saveFileName;
 
                     //데이터 저장
                     try {
@@ -196,7 +196,7 @@ public class NoteService {
                     //랜덤 파일이름 (파일이름 중복 방지용)
                     String saveFileName = createSaveFileName(originalFilename);
 
-                    String filePath = "C:/Users/Public/Documents" + saveFileName;
+                    String filePath = "/usr/" + saveFileName;
 
                     //데이터 저장
                     try {
@@ -462,7 +462,7 @@ public class NoteService {
                 //랜덤 파일이름 (파일이름 중복 방지용)
                 String saveFileName = createSaveFileName(originalFilename);
 
-                String filePath = "C:/Users/Public/Documents" + saveFileName;
+                String filePath = "/usr/" + saveFileName;
 
                 //데이터 저장
                 try {
@@ -540,7 +540,7 @@ public class NoteService {
     private Path getFullPath(String filename) {
 
         //파일이 실제로 저장될 위치
-        Path uploadPath = Paths.get("C:/Users/Public/Documents" + filename);
+        Path uploadPath = Paths.get("/usr/" + filename);
         return uploadPath;
     }
 
