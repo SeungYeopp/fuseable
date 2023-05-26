@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserRepository userRepository;
 
-    public static final String FRONT_URL = "http://www.fuseable.monster";
+    public static final String FRONT_URL = "http://fuseable.monster";
 
     private final CorsFilter corsFilter;
 
