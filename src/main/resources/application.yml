@@ -21,7 +21,7 @@ spring:
               google:
                 client-id: 192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com
                 client-secret: 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
-                redirect-uri: http://fuseable.cloud:8080/login/oauth2/code
+                redirect-uri: http://back.fuseable.monster:8080/login/oauth2/code
                 token-uri: https://oauth2.googleapis.com/token
                 resource-uri: https://www.googleapis.com/oauth2/v2/userinfo
                 scope: https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
