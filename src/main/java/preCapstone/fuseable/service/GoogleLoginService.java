@@ -53,7 +53,7 @@ public class GoogleLoginService {
         params.add("code", authorizationCode);
         params.add("client_id", "192368607699-eon5h3ukefophnirb7brql8f4jr3cu6j.apps.googleusercontent.com");
         params.add("client_secret", "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");
-        params.add("redirect_uri", "http://fuseable.monster:3000/googleredirect");
+        params.add("redirect_uri", "http://www.fuseable.monster:3000/googleredirect");
         params.add("grant_type", "authorization_code");
 
 
